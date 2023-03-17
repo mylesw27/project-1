@@ -12,7 +12,7 @@ header {
 }
 
 canvas {
-    background-color: black;
+    background-color: rgb(11, 96, 11);
     height: 500px;
     width: 1200px;
 
