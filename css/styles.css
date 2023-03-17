@@ -1,0 +1,70 @@
+body {
+    background-color: antiquewhite;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+header {
+    margin: 0px 0 0px 0;
+}
+
+canvas {
+    background-color: black;
+    height: 500px;
+    width: 1200px;
+
+}
+
+#scoreboard {
+    background-color: gray;
+    height: 140px;
+    width: 1200px;;
+    display: grid;
+    grid-template-columns: 300px 200px 200px 200px 200px;
+    grid-template-rows: 140px;
+    grid-template-areas: 
+    "userTeamInfo userTeamScore clock compTeamScore compTeamInfo";
+}
+
+#userTeamInfoDiv {
+    grid-area: userTeamInfo;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#userTeamScoreDiv {
+    grid-area: userTeamScore;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#clockDiv {
+    grid-area: clock;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#compTeamScoreDiv {
+    grid-area: compTeamScore;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#compTeamInfoDiv {
+    grid-area: compTeamInfo;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
