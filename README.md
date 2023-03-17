@@ -10,11 +10,11 @@ This is a 2D, side-scrolling game. The game will start with the player on the le
 - JavaScript 
 
 ## Wireframes
-[title](./img/title-screen.png)
-[start](./img/gameplay-screen-start.png)
-[scoring](./img/gameplay-screen-scoring.png)
-[opponent](./img/gameplay-screen-opponent-drive.png)
-[win](./img/win-screen.png)
+[title](./title-screen.png)
+[start](./gameplay-screen-start.png)
+[scoring](./gameplay-screen-scoring.png)
+[opponent](./gameplay-screen-opponent-drive.png)
+[win](./win-screen.png)
 
 ## MVP Goals
 - Render a title screen
