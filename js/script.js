@@ -41,7 +41,7 @@ ctx.fillRect (1090, 20, 1, 460) // goal line - Right End Zone
 
 //Create Classes
 // Overarching class for all football players
-class fbPLayer {
+class fbPlayer {
     constructor(x, y, width, height, color) {
         this.x = x
         this.y = y
@@ -57,16 +57,47 @@ class fbPLayer {
 }
 
 // Child class of football players for user player
+class userFBPlayer extends fbPlayer {
+    constructor (x, y, width, height) {
+        super(x, y, width, height)
+        this.color = "blue"
+    }
+}
+
 
 // Child class of football players for teammates
+class teammate extends fbPlayer {
+    constructor (x, y, width, height) {
+        super(x, y, width, height)
+        this.color = "blue"
+    }
+}
 
 // Child class of football players for defenders
+class defender extends fbPlayer {
+    constructor (x, y, width, height) {
+        super(x, y, width, height)
+        this.color = "red"
+    }
+}
 
 
 // Game objects
-// const user = new fbPlayer()
+const newPlayer = new fbPlayer(256, 220, 10, 10, "purple")  // Test Player
+const joBackson = new userFBPlayer(210,220, 10, 10)
+newPlayer.render()
+joBackson.render()
 
 
+// Map Keys (function handleKeyPressEvent with switch)
+
+// Game Loop
+    // clear off render
+    // check for collision
+        // tackle
+        // touchdown
+    // check game conditions
+    // do all of the rendering
 
 // Console log for testing
 console.log(ctx)
