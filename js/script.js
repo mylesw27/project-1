@@ -44,6 +44,13 @@ let renderField = function () {
 }
 
 
+// Check for touchdown collision
+const touchdownCheck = function() {
+    if (joBackson.x + joBackson.width > 480) {
+        console.log("Touchdown!")
+    }
+}
+
 //Create Classes
 // Overarching class for all football players
 class fbPlayer {
@@ -188,6 +195,7 @@ function gameLoop () {
         // tackle
         // touchdown
     // check game conditions
+    touchdownCheck()
     // do all of the rendering
     renderField()
     renderPlayers()
