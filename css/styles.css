@@ -15,7 +15,7 @@ canvas {
     background-color: rgb(11, 96, 11);
     height: 700px;
     width: 1200px;
-
+    /* border-left: 20px solid white; */
 }
 
 #scoreboard {
@@ -67,4 +67,16 @@ canvas {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#joImg1 {
+    display: none;
+}
+
+.userTeam {
+    margin: 0;
+}
+
+.compTeam {
+    margin: 0;
 }

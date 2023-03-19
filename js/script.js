@@ -3,6 +3,7 @@ const clock = document.querySelector("#clock")
 const userScore = document.querySelector("#userScore")
 const compScore = document.querySelector("#compScore")
 const canvas = document.querySelector("canvas")
+const joImg1 = document.querySelector("#joImg1")
 
 // Canvas Setup
 const ctx = canvas.getContext("2d")
@@ -10,7 +11,7 @@ const ctx = canvas.getContext("2d")
 canvas.setAttribute('height', getComputedStyle(canvas).height)
 canvas.setAttribute('width', 600)
 
-let originX = 00
+let originX = 0
 let originY = 0 
 
 let renderField = function () {
@@ -47,18 +48,19 @@ let renderField = function () {
 // Overarching class for all football players
 class fbPlayer {
     constructor(x, y, color) {
-        this.x = x
+        this.x = x + originX
         this.y = y
-        this.width = 5
-        this.height = 10
+        this.width = 25
+        this.height = 60
         this.color = color
     }
 
     render() {
         ctx.fillStyle = this.color
-        ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.fillRect(this.x+originX, this.y, this.width, this.height)
     }
 }
+
 
 // Child class of football players for user player
 class userFBPlayer extends fbPlayer {
@@ -66,8 +68,12 @@ class userFBPlayer extends fbPlayer {
         super(x, y)
         this.color = "blue"
     }
+    render() {
+        ctx.fillStyle = this.color
+        ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.drawImage(joImg1, this.x, this.y, 25, 60)
+    }
 }
-
 
 // Child class of football players for teammates
 class teammate extends fbPlayer {
@@ -79,31 +85,31 @@ class teammate extends fbPlayer {
 
 // Child class of football players for defenders
 class defender extends fbPlayer {
-    constructor (x, y) {
-        super(x, y)
-        this.color = "red"
+    constructor (x, y, color) {
+        super(x, y, color)
+        this.color = color
     }
 }
 
 
 // Game objects
-const newPlayer = new fbPlayer(256, 220, "purple")  // Test Player
+// const newPlayer = new fbPlayer(256, 220, "purple")  // Test Player 
 const joBackson = new userFBPlayer(210,220)
-const defender1 = new defender(325, 50)
-const defender2 = new defender(400, 100)
-const defender3 = new defender(300, 150)
-const defender4 = new defender(350, 150)
-const defender5 = new defender(300, 220)
-const defender6 = new defender(350, 250)
-const defender7 = new defender(300, 280)
-const defender8 = new defender(350, 350)
-const defender9 = new defender(300, 300)
-const defender10 = new defender(400, 400)
-const defender11 = new defender(325, 410)
+const defender1 = new defender(390, 75, "green") // CB (top of screen)
+const defender2 = new defender(500, 186, "purple") // Safety (top of screen)
+const defender3 = new defender(350, 150, "yellow") // DE (top of screen)
+const defender4 = new defender(400, 150, "orange") // OLB (top of screen)
+const defender5 = new defender(350, 220, "red") // DT (top of screen)
+const defender6 = new defender(400, 250, "blue") // MLB
+const defender7 = new defender(350, 300, "lime") // DT (bottom of screen)
+const defender8 = new defender(400, 350, "aqua") // OLB (bottom of screen)
+const defender9 = new defender(350, 400, "hotpink") // (DE (bottom of screen)
+const defender10 = new defender(500, 400, "grey") // Safety (bottom of screen)
+const defender11 = new defender(420, 525, "white") // CB (bottom of screen)
 
 
 const renderPlayers = function(){
-    newPlayer.render() // Test Player
+    // newPlayer.render() // Test Player
     joBackson.render()
     defender1.render()
     defender2.render()
@@ -125,7 +131,7 @@ const gameLoopInterval = setInterval(gameLoop, 60)
 
 // const sideScroll = setInterval(function () {
 //     if (originX >= -610) {
-//     originX -= 15
+//     originX -= 5
 //     }
 // }, 300)
 
@@ -137,19 +143,37 @@ function handleKeyPressEvent(e) {
     switch(e.key) {
         case "w":
         case "ArrowUp":
+            e.preventDefault()
             joBackson.y -= speed
             break
         case "s":
         case "ArrowDown":
+            e.preventDefault()
             joBackson.y += speed
             break
         case "a":
         case "ArrowLeft":
-            joBackson.x -= speed
+            e.preventDefault()
+            if (joBackson.x <= 210 && originX === 0 ) {
+                joBackson.x -= speed
+            } else if (joBackson.x > 210 && originX <= -600){
+                joBackson.x -= speed
+            } else {
+                originX += speed
+            }
             break
         case "d":
         case "ArrowRight":
-            joBackson.x += speed
+            e.preventDefault()
+            if (joBackson.x < 210 && originX === 0) {
+                joBackson.x += speed
+            } else if (joBackson.x >= 210 && originX <= -600) {
+                joBackson.x += speed
+            } 
+            else {
+                originX -= speed
+            }
+            console.log(originX)
             break
     }
 }
@@ -170,6 +194,10 @@ function gameLoop () {
     // console.log("loop")-
 }
 
+// Console log mouse location for testing
+canvas.addEventListener("click", e => {
+    console.log(`x: ${e.offsetX}, y: ${e.offsetY}`)
+})
 // Console log for testing
-console.log(ctx)
-ctx.drawImage()
+console.log(joImg1)
+console.log(joBackson)
