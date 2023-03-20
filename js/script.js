@@ -14,8 +14,13 @@ canvas.setAttribute('width', 600)
 let originX = 0
 let originY = 0 
 
+
 let userScore = 0
 let compScore = 0
+
+let gameActive = true
+let touchDownActive = false
+let compu
 
 let renderField = function () {
     // Create End Zones
@@ -47,15 +52,6 @@ let renderField = function () {
 }
 
 
-// Check for touchdown collision
-const touchdownCheck = function() {
-    if (joBackson.x + joBackson.width > 480) {
-        userScore += 7
-        userScoreDisplay.innerText = `${userScore}`
-        console.dir(userScore)
-        clearInterval(gameLoopInterval)
-    }
-}
 
 //Create Classes
 // Overarching class for all football players
@@ -128,20 +124,32 @@ const renderPlayers = function(){
     })
 }
 
-
 const gameLoopInterval = setInterval(gameLoop, 60)
 
+// Check for touchdown collision
+const touchdownCheck = function() {
+    if (joBackson.x + joBackson.width > 480) {
+        gameActive = false
+        userScore += 7
+        userScoreDisplay.innerText = `${userScore}`
+        ctx.font = "50px Sans Serif"
+        ctx.fillText ("TOUCHDOWN", 50, 300)
+        setTimeout(computerDriveTimeout, 1000)
+    }
+}
 const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
+const defenderOriginX = [390, 500, 350, 400, 350, 400, 350, 400, 350, 500, 420]
+const defenderOriginY = [75, 186, 150, 150, 220, 250, 300, 350, 400, 400, 525]
 
 // Check for collision with defenders
 
 
 // const sideScroll = setInterval(function () {
-//     if (originX >= -610) {
-//     originX -= 5
-//     }
-// }, 300)
-
+    //     if (originX >= -610) {
+        //     originX -= 5
+        //     }
+        // }, 300)
+        
 // sideScroll() 
 
 // Map Keys (function handleKeyPressEvent with switch)
@@ -181,6 +189,9 @@ function handleKeyPressEvent(e) {
                 originX -= speed
             }
             break
+        // case "Enter":
+        //     clearInterval(computerDriveInterval)
+        //     break
     }
 }
 
@@ -188,46 +199,74 @@ document.addEventListener("keydown", handleKeyPressEvent)
 
 // Game Loop
 function gameLoop () {
-    // clear off render
-    ctx.clearRect(0,0, canvas.width, canvas.height)
-    // check for collision
-        // touchdown
-        touchdownCheck()
-        // tackle
-        const tackleCheck = defenderArray.forEach(function (i) {
-            const left = i.x + originX <= joBackson.width + joBackson.x
-            const right = i.x + i.width + originX >= joBackson.x
-            const top = i.y + originY <= joBackson.y + joBackson.height
-            const bottom = i.y + i.height + originY>= joBackson.y
-            if (left && right && top && bottom) {
-                console.log("tackle: " + i)
+    if (gameActive) {
+        // clear off render
+        ctx.clearRect(0,0, canvas.width, canvas.height)
+        // check for collision
+            // touchdown
+            touchdownCheck()
+            // tackle
+            const tackleCheck = defenderArray.forEach(function (i) {
+                const left = i.x + originX <= joBackson.width + joBackson.x
+                const right = i.x + i.width + originX >= joBackson.x
+                const top = i.y + originY <= joBackson.y + joBackson.height
+                const bottom = i.y + i.height + originY>= joBackson.y
+                if (left && right && top && bottom) {
+                    console.log("tackle: " + i)
+                }
+            
+            })
+        // check game conditions
+        console.log(gameActive)
+        // do all of the rendering
+        renderField()
+        renderPlayers()
+        // Move defensive players
+        const moveDefense = defenderArray.forEach(function(i) {
+            const defenderSpeed = 1
+            if (i.x + originX > joBackson.x){
+                i.x -= defenderSpeed
+            } else if (i.x + originX < joBackson.x){
+                i.x += defenderSpeed
             }
-        
+            if (i.y > joBackson.y){
+                i.y -= defenderSpeed
+            } else if (i.y < joBackson.y){
+                i.y += defenderSpeed
+            }
         })
-    // check game conditions
-    // do all of the rendering
-    renderField()
-    renderPlayers()
-    // Move defensive players
-    const moveDefense = defenderArray.forEach(function(i) {
-        const defenderSpeed = 1
-        if (i.x + originX > joBackson.x){
-            i.x -= defenderSpeed
-        } else if (i.x + originX < joBackson.x){
-            i.x += defenderSpeed
-        }
-        if (i.y > joBackson.y){
-            i.y -= defenderSpeed
-        } else if (i.y < joBackson.y){
-            i.y += defenderSpeed
-        }
-    })
+    }
 }
+
+const reset = function () {
+    originX = 0
+    originY = 0
+    const resetDefenders = defenderArray.forEach(function(i) {
+        i.x = defenderOriginX[i]
+        i.y = defenderOriginY[i]
+        console.dir(defenderArray)
+    })
+    joBackson.x = 210
+    joBackson.y = 220
+    gameActive = true
+    console.log("reset")
+}
+
+function computerDriveTimeout() {
+    ctx.clearRect(0,0, canvas.width, canvas.height)
+    originX = -300
+    renderField() 
+    console.log('computerDriveTimeout')
+    setTimeout(reset, 3000)
+}
+
+
+
 
 // Console log mouse location for testing
 canvas.addEventListener("click", e => {
     console.log(`x: ${e.offsetX}, y: ${e.offsetY}`)
 })
 // Console log for testing
-console.log(joImg1)
-console.log(joBackson)
+console.log(gameLoop)
+console.log(gameLoopInterval)
