@@ -19,7 +19,7 @@ let userScore = 0
 let compScore = 0
 
 let totalGameTime = 120
-let gameClockMinutes = totalGameTime / 60
+let gameClockMinutes = Math.floor(totalGameTime / 60)
 let gameClockSeconds = totalGameTime % 60
 
 let gameActive = true
@@ -27,17 +27,22 @@ let touchDownActive = false
 clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
 
 const clockTick = function(){
-    if (gameActive && (gameClockMinutes > 0 || gameClockSeconds > 0)) {
-        if (gameClockSeconds === 0) {
-            gameClockMinutes --
-            gameClockSeconds = 59
-        } else {
-            gameClockSeconds --
-        }
-    } else {
-        console.log("no tick, game inactive")
+    // reduce clock by 1 second if game is active and total time is more than zero
+    if (gameActive && totalGameTime > 0) {
+        totalGameTime -= 1
+        gameClockMinutes = Math.floor(totalGameTime / 60)
+        gameClockSeconds = totalGameTime % 60
+        // console.log("tick")
+    } else if (totalGameTime > 0){
+        gameClockMinutes = Math.floor(totalGameTime / 60)
+        gameClockSeconds = totalGameTime % 60
+        console.log(`${gameClockMinutes} : ${gameClockSeconds}`)
+    }  else if (totalGameTime <= 0) {
+        gameClockMinutes = 0
+        gameClockSeconds = 0
     }
-    if (gameClockSeconds <=9) {
+    // Adds 0 to display when clock is less than 10 seconds 
+    if (gameClockSeconds <= 9) {
         clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
     } else {
         clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
@@ -81,26 +86,25 @@ let compDriveYards = 0
 let compDriveScore = 0
 
 let computerDriveLogic = function() {
-    compDriveTime = getRandomInt(30)
-    if (totalGameTime < 30) {
-        totalGameTime = 0
-    } else {
-        totalGameTime = totalGameTime - compDriveTime
+    if (totalGameTime > 0) {
+        compDriveTime = getRandomInt(30)
+        if (totalGameTime <= 0) {
+            totalGameTime = 0
+            clock.innerText = "0:00"
+            console.log("0:00")
+        } else {
+            totalGameTime = totalGameTime - compDriveTime
+        }
+        clockTick()
+        compDriveYards = getRandomInt (100)
+        if (compDriveYards > 75) {
+            compDriveScore = 7
+            compScore = compScore + compDriveScore
+            compScoreDisplay.innerText = compScore
+        } else {
+            compDriveScore = 0
+        }
     }
-     if (gameClockSeconds <=9) {
-        clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
-    } else {
-        clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
-    }
-    compDriveYards = getRandomInt (100)
-    if (compDriveYards > 75) {
-        compDriveScore = 7
-        compScore = compScore + compDriveScore
-        compScoreDisplay.innerText = compScore
-    } else {
-        compDriveScore = 0
-    }
-
 }
 
 let renderComputerDriveSummary = function () {
@@ -109,7 +113,6 @@ let renderComputerDriveSummary = function () {
     ctx.roundRect(148, 48, 316, 466, 5)
     ctx.stroke()
     ctx.fillStyle = "orange"
-    // ctx.beginPath()
     ctx.roundRect(150, 50, 300, 450, 5)
     ctx.fill()
     ctx.fillStyle = "black"
@@ -118,11 +121,14 @@ let renderComputerDriveSummary = function () {
     ctx.fillText ("Time :", 165, 200)
     ctx.fillText ("Yards :", 165, 300)
     ctx.fillText ("Points :", 165, 400)
-    computerDriveLogic()
     ctx.fillText (`0:${compDriveTime}`, 250, 200)
-    ctx.fillText (`0:${compDriveYards}`, 250, 300)
-    ctx.fillText (`0:${compDriveScore}`, 250, 400)
-
+    ctx.fillText (`${compDriveYards}`, 250, 300)
+    ctx.fillText (`${compDriveScore}`, 250, 400)
+    if (gameClockSeconds <=9) {
+        clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
+    } else {
+        clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
+    }
 }
 
 
@@ -214,17 +220,35 @@ const touchdownCheck = function() {
         setTimeout(computerDriveTimeout, 1000)
     }
 }
+
+const gameResult = function() {
+    if (userScore > compScore) {
+        ctx.clearRect(0,0, canvas.width, canvas.height)
+        ctx.fillText ("CONGRATULATIONS!!", 165, 100)
+        ctx.fillText ("You have won the Canvas Bowl", 165, 300)
+    } else if (userScore < compScore) {
+        ctx.clearRect(0,0, canvas.width, canvas.height)
+        ctx.fillText ("Sorry", 165, 100)
+        ctx.fillText ("You have lost the Canvas Bowl", 165, 300)
+    } else {
+        totalGameTime = 30
+        gameActive = true
+    }
+}
 const reset = function () {
     originX = 0
     originY = 0
     const resetDefenders = defenderArray.forEach(function(defenderArr,i) {
         defenderArr.x = defenderOriginX[i]
         defenderArr.y = defenderOriginY[i]
-        console.log(defenderOriginX[i])
     })
     joBackson.x = 210
     joBackson.y = 220
-    gameActive = true
+    if (totalGameTime > 0) {
+        gameActive = true
+    } else {
+        gameResult()
+    }
     console.log("reset")
 }
 
@@ -232,6 +256,7 @@ function computerDriveTimeout() {
     ctx.clearRect(0,0, canvas.width, canvas.height)
     originX = -300
     renderField() 
+    computerDriveLogic()
     renderComputerDriveSummary()
     console.log('computerDriveTimeout')
     setTimeout(reset, 3000)
