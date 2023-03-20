@@ -1,7 +1,7 @@
 // DOM Selectors
 const clock = document.querySelector("#clock")
-const userScore = document.querySelector("#userScore")
-const compScore = document.querySelector("#compScore")
+const userScoreDisplay = document.querySelector("#userScore")
+const compScoreDisplay = document.querySelector("#compScore")
 const canvas = document.querySelector("canvas")
 const joImg1 = document.querySelector("#joImg1")
 
@@ -13,6 +13,9 @@ canvas.setAttribute('width', 600)
 
 let originX = 0
 let originY = 0 
+
+let userScore = 0
+let compScore = 0
 
 let renderField = function () {
     // Create End Zones
@@ -47,7 +50,10 @@ let renderField = function () {
 // Check for touchdown collision
 const touchdownCheck = function() {
     if (joBackson.x + joBackson.width > 480) {
-        console.log("Touchdown!")
+        userScore += 7
+        userScoreDisplay.innerText = `${userScore}`
+        console.dir(userScore)
+        clearInterval(gameLoopInterval)
     }
 }
 
@@ -61,13 +67,12 @@ class fbPlayer {
         this.height = 60
         this.color = color
     }
-
+    
     render() {
         ctx.fillStyle = this.color
         ctx.fillRect(this.x+originX, this.y, this.width, this.height)
     }
 }
-
 
 // Child class of football players for user player
 class userFBPlayer extends fbPlayer {
@@ -118,22 +123,17 @@ const defender11 = new defender(420, 525, "white") // CB (bottom of screen)
 const renderPlayers = function(){
     // newPlayer.render() // Test Player
     joBackson.render()
-    defender1.render()
-    defender2.render()
-    defender3.render()
-    defender4.render()
-    defender5.render()
-    defender6.render()
-    defender7.render()
-    defender8.render()
-    defender9.render()
-    defender10.render()
-    defender11.render()
-
+    defenderArray.forEach(function(i){
+        i.render()
+    })
 }
 
 
 const gameLoopInterval = setInterval(gameLoop, 60)
+
+const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
+
+// Check for collision with defenders
 
 
 // const sideScroll = setInterval(function () {
@@ -180,7 +180,6 @@ function handleKeyPressEvent(e) {
             else {
                 originX -= speed
             }
-            console.log(originX)
             break
     }
 }
@@ -192,14 +191,37 @@ function gameLoop () {
     // clear off render
     ctx.clearRect(0,0, canvas.width, canvas.height)
     // check for collision
-        // tackle
         // touchdown
+        touchdownCheck()
+        // tackle
+        const tackleCheck = defenderArray.forEach(function (i) {
+            const left = i.x + originX <= joBackson.width + joBackson.x
+            const right = i.x + i.width + originX >= joBackson.x
+            const top = i.y + originY <= joBackson.y + joBackson.height
+            const bottom = i.y + i.height + originY>= joBackson.y
+            if (left && right && top && bottom) {
+                console.log("tackle: " + i)
+            }
+        
+        })
     // check game conditions
-    touchdownCheck()
     // do all of the rendering
     renderField()
     renderPlayers()
-    // console.log("loop")-
+    // Move defensive players
+    const moveDefense = defenderArray.forEach(function(i) {
+        const defenderSpeed = 1
+        if (i.x + originX > joBackson.x){
+            i.x -= defenderSpeed
+        } else if (i.x + originX < joBackson.x){
+            i.x += defenderSpeed
+        }
+        if (i.y > joBackson.y){
+            i.y -= defenderSpeed
+        } else if (i.y < joBackson.y){
+            i.y += defenderSpeed
+        }
+    })
 }
 
 // Console log mouse location for testing
