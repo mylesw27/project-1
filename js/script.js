@@ -18,10 +18,31 @@ let originY = 0
 let userScore = 0
 let compScore = 0
 
+let totalGameTime = 120
+let gameClockMinutes = totalGameTime / 60
+let gameClockSeconds = totalGameTime % 60
+
 let gameActive = true
 let touchDownActive = false
-let compu
+clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
 
+const clockTick = function(){
+    if (gameActive && (gameClockMinutes > 0 || gameClockSeconds > 0)) {
+        if (gameClockSeconds === 0) {
+            gameClockMinutes --
+            gameClockSeconds = 59
+        } else {
+            gameClockSeconds --
+        }
+    } else {
+        console.log("no tick, game inactive")
+    }
+    if (gameClockSeconds <=9) {
+        clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
+    } else {
+        clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
+    }
+}
 let renderField = function () {
     // Create End Zones
     ctx.fillStyle = "blue"
@@ -51,6 +72,58 @@ let renderField = function () {
     ctx.fillRect (originX+1080, originY+20, 1, 650) // goal line - Right End Zone
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max)
+}
+
+let compDriveTime = 0
+let compDriveYards = 0
+let compDriveScore = 0
+
+let computerDriveLogic = function() {
+    compDriveTime = getRandomInt(30)
+    if (totalGameTime < 30) {
+        totalGameTime = 0
+    } else {
+        totalGameTime = totalGameTime - compDriveTime
+    }
+     if (gameClockSeconds <=9) {
+        clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
+    } else {
+        clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
+    }
+    compDriveYards = getRandomInt (100)
+    if (compDriveYards > 75) {
+        compDriveScore = 7
+        compScore = compScore + compDriveScore
+        compScoreDisplay.innerText = compScore
+    } else {
+        compDriveScore = 0
+    }
+
+}
+
+let renderComputerDriveSummary = function () {
+    ctx.strokeStyle = "redorange"
+    ctx.beginPath()
+    ctx.roundRect(148, 48, 316, 466, 5)
+    ctx.stroke()
+    ctx.fillStyle = "orange"
+    // ctx.beginPath()
+    ctx.roundRect(150, 50, 300, 450, 5)
+    ctx.fill()
+    ctx.fillStyle = "black"
+    ctx.font = "25px Sans Serif"
+    ctx.fillText ("Defender's Drive Summary", 165, 100)
+    ctx.fillText ("Time :", 165, 200)
+    ctx.fillText ("Yards :", 165, 300)
+    ctx.fillText ("Points :", 165, 400)
+    computerDriveLogic()
+    ctx.fillText (`0:${compDriveTime}`, 250, 200)
+    ctx.fillText (`0:${compDriveYards}`, 250, 300)
+    ctx.fillText (`0:${compDriveScore}`, 250, 400)
+
+}
 
 
 //Create Classes
@@ -125,6 +198,7 @@ const renderPlayers = function(){
 }
 
 const gameLoopInterval = setInterval(gameLoop, 60)
+const clockTickInterval = setInterval(clockTick, 1000)
 const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
 const defenderOriginX = [390, 500, 350, 400, 350, 400, 350, 400, 350, 500, 420]
 const defenderOriginY = [75, 186, 150, 150, 220, 250, 300, 350, 400, 400, 525]
@@ -158,6 +232,7 @@ function computerDriveTimeout() {
     ctx.clearRect(0,0, canvas.width, canvas.height)
     originX = -300
     renderField() 
+    renderComputerDriveSummary()
     console.log('computerDriveTimeout')
     setTimeout(reset, 3000)
 }
@@ -233,7 +308,7 @@ function gameLoop () {
                 const top = i.y + originY <= joBackson.y + joBackson.height
                 const bottom = i.y + i.height + originY>= joBackson.y
                 if (left && right && top && bottom) {
-                    console.log("tackle: " + i)
+                    // console.log("tackle: " + i)
                 }
             
             })
@@ -262,10 +337,9 @@ function gameLoop () {
 
 
 
-
 // Console log mouse location for testing
 canvas.addEventListener("click", e => {
     console.log(`x: ${e.offsetX}, y: ${e.offsetY}`)
 })
 // Console log for testing
-console.log(defenderOriginX)
+// console.log(defenderOriginX)

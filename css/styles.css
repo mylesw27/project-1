@@ -27,6 +27,7 @@ canvas {
     grid-template-rows: 60px;
     grid-template-areas: 
     "userTeamInfo userTeamScore clock compTeamScore compTeamInfo";
+    font-family: 'Bungee', cursive;
 }
 
 #userTeamInfoDiv {
@@ -75,8 +76,18 @@ canvas {
 
 .userTeam {
     margin: 0;
+    font-size: 28px;
 }
 
 .compTeam {
     margin: 0;
+    font-size: 28px;
+}
+
+.score {
+    font-size: 70px;
+}
+
+.clock {
+    font-size: 40px;
 }
