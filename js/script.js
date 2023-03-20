@@ -125,6 +125,9 @@ const renderPlayers = function(){
 }
 
 const gameLoopInterval = setInterval(gameLoop, 60)
+const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
+const defenderOriginX = [390, 500, 350, 400, 350, 400, 350, 400, 350, 500, 420]
+const defenderOriginY = [75, 186, 150, 150, 220, 250, 300, 350, 400, 400, 525]
 
 // Check for touchdown collision
 const touchdownCheck = function() {
@@ -137,9 +140,27 @@ const touchdownCheck = function() {
         setTimeout(computerDriveTimeout, 1000)
     }
 }
-const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
-const defenderOriginX = [390, 500, 350, 400, 350, 400, 350, 400, 350, 500, 420]
-const defenderOriginY = [75, 186, 150, 150, 220, 250, 300, 350, 400, 400, 525]
+const reset = function () {
+    originX = 0
+    originY = 0
+    const resetDefenders = defenderArray.forEach(function(defenderArr,i) {
+        defenderArr.x = defenderOriginX[i]
+        defenderArr.y = defenderOriginY[i]
+        console.log(defenderOriginX[i])
+    })
+    joBackson.x = 210
+    joBackson.y = 220
+    gameActive = true
+    console.log("reset")
+}
+
+function computerDriveTimeout() {
+    ctx.clearRect(0,0, canvas.width, canvas.height)
+    originX = -300
+    renderField() 
+    console.log('computerDriveTimeout')
+    setTimeout(reset, 3000)
+}
 
 // Check for collision with defenders
 
@@ -238,27 +259,6 @@ function gameLoop () {
     }
 }
 
-const reset = function () {
-    originX = 0
-    originY = 0
-    const resetDefenders = defenderArray.forEach(function(i) {
-        i.x = defenderOriginX[i]
-        i.y = defenderOriginY[i]
-        console.dir(defenderArray)
-    })
-    joBackson.x = 210
-    joBackson.y = 220
-    gameActive = true
-    console.log("reset")
-}
-
-function computerDriveTimeout() {
-    ctx.clearRect(0,0, canvas.width, canvas.height)
-    originX = -300
-    renderField() 
-    console.log('computerDriveTimeout')
-    setTimeout(reset, 3000)
-}
 
 
 
@@ -268,5 +268,4 @@ canvas.addEventListener("click", e => {
     console.log(`x: ${e.offsetX}, y: ${e.offsetY}`)
 })
 // Console log for testing
-console.log(gameLoop)
-console.log(gameLoopInterval)
+console.log(defenderOriginX)
