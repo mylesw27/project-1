@@ -14,6 +14,9 @@ canvas.setAttribute('width', 600)
 let originX = 0
 let originY = 0 
 
+let isTouchdown = false
+let isTackled = false
+let isOutOfBounds = false
 
 let userScore = 0
 let compScore = 0
@@ -218,6 +221,7 @@ const touchdownCheck = function() {
         ctx.font = "50px Sans Serif"
         ctx.fillText ("TOUCHDOWN", 50, 300)
         setTimeout(computerDriveTimeout, 1000)
+        console.log("Touchdown")
     }
 }
 
@@ -238,6 +242,7 @@ const gameResult = function() {
 const reset = function () {
     originX = 0
     originY = 0
+    isTackled = false
     const resetDefenders = defenderArray.forEach(function(defenderArr,i) {
         defenderArr.x = defenderOriginX[i]
         defenderArr.y = defenderOriginY[i]
@@ -322,18 +327,28 @@ document.addEventListener("keydown", handleKeyPressEvent)
 function gameLoop () {
     if (gameActive) {
         // clear off render
+        if (totalGameTime === 0) {
+            ctx.font = "50px Sans Serif"
+            ctx.fillText ("Last Play", 150, 100)
+        }
         ctx.clearRect(0,0, canvas.width, canvas.height)
         // check for collision
             // touchdown
             touchdownCheck()
+            // out of bounds
+            // outOfBoundsCheck ()
             // tackle
             const tackleCheck = defenderArray.forEach(function (i) {
                 const left = i.x + originX <= joBackson.width + joBackson.x
                 const right = i.x + i.width + originX >= joBackson.x
                 const top = i.y + originY <= joBackson.y + joBackson.height
                 const bottom = i.y + i.height + originY>= joBackson.y
-                if (left && right && top && bottom) {
-                    // console.log("tackle: " + i)
+                if (left && right && top && bottom && isTackled == false) {
+                    isTackled = true
+                    ctx.font = "50px Sans Serif"
+                    ctx.fillText ("TACKLED", 150, 100)
+                    gameActive = false
+                    setTimeout(computerDriveTimeout, 1000)
                 }
             
             })
