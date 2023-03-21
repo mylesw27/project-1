@@ -50,18 +50,24 @@ const titleScreen = setInterval(function() {
     ctx.fillText ("FOOTBALL", 300, 300)
 }, 60)
 
-// const titleScreenTransition = setInterval(function() {
-//     ctx.clearRect(0,0, canvas.width, canvas.height)
-//     renderField()
-//     renderPlayers()
-// }, 60)
 
 
 const clearTitleScreen =  function() {
     clearInterval(titleScreen)
-    gameActive = true
     scoreboard.style.display = "grid"
-    console.dir(scoreboard)
+    joBackson.x = 150
+    originX = 60
+    const titleScreenTransition = setInterval(function() {
+        ctx.clearRect(0,0, canvas.width, canvas.height)
+        renderField()
+        renderPlayers()
+        joBackson.x += 5
+        originX -= 5
+    }, 60)
+    setTimeout(function() {
+        clearInterval(titleScreenTransition)
+        gameActive = true
+    }, 720)
 }
 
 const joImgMove = function (){
