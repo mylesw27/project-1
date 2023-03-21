@@ -1,10 +1,12 @@
 body {
-    background-color: antiquewhite;
+    /* background-color: antiquewhite; */
     width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background: url("../img/grass_texture.png");
+
 }
 
 header {
@@ -12,10 +14,14 @@ header {
 }
 
 canvas {
-    background-color: rgb(11, 96, 11);
+    /* background-color: rgb(11, 96, 11); */
     height: 700px;
     width: 1200px;
+    /* height: 80vh; */
+    /* width: 100vw;  */
     /* border-left: 20px solid white; */
+    /* background: url("../img/grass_texture.png"); */
+    
 }
 
 #scoreboard {

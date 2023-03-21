@@ -29,6 +29,7 @@ let touchDownActive = false
 clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
 const joImgArray = [joImg1, joImg2, joImg3, joImg4]
 let joCurrentImage = 0
+let sideScrollActive = true
 
 const joImgMove = function (){
     if (joCurrentImage >= joImgArray.length - 1){
@@ -39,7 +40,7 @@ const joImgMove = function (){
     }    
 }
 
-// const joImgInterval = setInterval(joImgMove, 500)
+const joImgInterval = setInterval(joImgMove, 350)
 
 const clockTick = function(){
     // reduce clock by 1 second if game is active and total time is more than zero
@@ -119,7 +120,7 @@ let computerDriveLogic = function() {
         } else {
             compDriveScore = 0
         }
-    }
+    } 
 }
 
 let renderComputerDriveSummary = function () {
@@ -131,14 +132,19 @@ let renderComputerDriveSummary = function () {
     ctx.roundRect(150, 50, 300, 450, 5)
     ctx.fill()
     ctx.fillStyle = "black"
-    ctx.font = "25px Sans Serif"
-    ctx.fillText ("Defender's Drive Summary", 165, 100)
+    ctx.font = "25px bungee"
+    ctx.fillText ("Defender's", 230, 100)
+    ctx.fillText ("Drive Summary", 195, 130)
     ctx.fillText ("Time :", 165, 200)
     ctx.fillText ("Yards :", 165, 300)
     ctx.fillText ("Points :", 165, 400)
-    ctx.fillText (`0:${compDriveTime}`, 250, 200)
-    ctx.fillText (`${compDriveYards}`, 250, 300)
-    ctx.fillText (`${compDriveScore}`, 250, 400)
+    if (compDriveTime <= 9) {
+        ctx.fillText (`0:0${compDriveTime}`, 375, 200)
+    } else {
+        ctx.fillText (`0:${compDriveTime}`, 375, 200)
+    }
+    ctx.fillText (`${compDriveYards}`, 375, 300)
+    ctx.fillText (`${compDriveScore}`, 375, 400)
     if (gameClockSeconds <=9) {
         clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
     } else {
@@ -198,17 +204,28 @@ class defender extends fbPlayer {
 // Game objects
 // const newPlayer = new fbPlayer(256, 220, "purple")  // Test Player 
 const joBackson = new userFBPlayer(210,220)
-const defender1 = new defender(390, 75, "green") // CB (top of screen)
-const defender2 = new defender(500, 186, "purple") // Safety (top of screen)
-const defender3 = new defender(350, 150, "yellow") // DE (top of screen)
-const defender4 = new defender(400, 150, "orange") // OLB (top of screen)
-const defender5 = new defender(350, 220, "red") // DT (top of screen)
-const defender6 = new defender(400, 250, "blue") // MLB
-const defender7 = new defender(350, 300, "lime") // DT (bottom of screen)
-const defender8 = new defender(400, 350, "aqua") // OLB (bottom of screen)
-const defender9 = new defender(350, 400, "hotpink") // (DE (bottom of screen)
-const defender10 = new defender(500, 400, "grey") // Safety (bottom of screen)
-const defender11 = new defender(420, 525, "white") // CB (bottom of screen)
+const defender1 = new defender(580, 75, "green") // CB (top of screen)
+const defender2 = new defender(1000, 186, "purple") // Safety (top of screen)
+const defender3 = new defender(450, 150, "yellow") // DE (top of screen)
+const defender4 = new defender(800, 150, "orange") // OLB (top of screen)
+const defender5 = new defender(450, 220, "red") // DT (top of screen)
+const defender6 = new defender(700, 250, "blue") // MLB
+const defender7 = new defender(450, 300, "lime") // DT (bottom of screen)
+const defender8 = new defender(700, 350, "aqua") // OLB (bottom of screen)
+const defender9 = new defender(450, 400, "hotpink") // (DE (bottom of screen)
+const defender10 = new defender(1000, 400, "grey") // Safety (bottom of screen)
+const defender11 = new defender(580, 525, "white") // CB (bottom of screen)
+// const defender1 = new defender(390, 75, "green") // CB (top of screen)
+// const defender2 = new defender(500, 186, "purple") // Safety (top of screen)
+// const defender3 = new defender(350, 150, "yellow") // DE (top of screen)
+// const defender4 = new defender(400, 150, "orange") // OLB (top of screen)
+// const defender5 = new defender(350, 220, "red") // DT (top of screen)
+// const defender6 = new defender(400, 250, "blue") // MLB
+// const defender7 = new defender(350, 300, "lime") // DT (bottom of screen)
+// const defender8 = new defender(400, 350, "aqua") // OLB (bottom of screen)
+// const defender9 = new defender(350, 400, "hotpink") // (DE (bottom of screen)
+// const defender10 = new defender(500, 400, "grey") // Safety (bottom of screen)
+// const defender11 = new defender(420, 525, "white") // CB (bottom of screen)
 
 
 const renderPlayers = function(){
@@ -222,16 +239,16 @@ const renderPlayers = function(){
 const gameLoopInterval = setInterval(gameLoop, 60)
 const clockTickInterval = setInterval(clockTick, 1000)
 const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
-const defenderOriginX = [390, 500, 350, 400, 350, 400, 350, 400, 350, 500, 420]
+const defenderOriginX = [580, 1000, 450, 800, 450, 700, 450, 700, 450, 1000, 580]
 const defenderOriginY = [75, 186, 150, 150, 220, 250, 300, 350, 400, 400, 525]
 
 // Check for touchdown collision
 const touchdownCheck = function() {
-    if (joBackson.x + joBackson.width > 480) {
+    if (joBackson.x + joBackson.width > 1080 + originX) {
         gameActive = false
         userScore += 7
         userScoreDisplay.innerText = `${userScore}`
-        ctx.font = "50px Sans Serif"
+        ctx.font = "50px bungee"
         ctx.fillText ("TOUCHDOWN", 50, 300)
         setTimeout(computerDriveTimeout, 1000)
         console.log("Touchdown")
@@ -240,17 +257,29 @@ const touchdownCheck = function() {
 
 const outOfBoundsCheck = function() {
     if (joBackson.y <= 50 && originY >= 80) {
-        console.log("OB")
+        gameActive = false
+        ctx.font = "50px bungee"
+        ctx.fillText ("Out of Bounds", 50, 300)
+        setTimeout(computerDriveTimeout, 1000)
+    } else if (joBackson.y + joBackson.height > 670) {
+        gameActive = false
+        ctx.font = "50px bungee"
+        ctx.fillText ("Out of Bounds", 50, 300)
+        setTimeout(computerDriveTimeout, 1000)
     }
 }
 
 const gameResult = function() {
     if (userScore > compScore) {
         ctx.clearRect(0,0, canvas.width, canvas.height)
+        ctx.fillStyle = "black"
+        ctx.font = "25px bungee"
         ctx.fillText ("CONGRATULATIONS!!", 165, 100)
         ctx.fillText ("You have won the Canvas Bowl", 165, 300)
     } else if (userScore < compScore) {
         ctx.clearRect(0,0, canvas.width, canvas.height)
+        ctx.fillStyle = "black"
+        ctx.font = "25px bungee"
         ctx.fillText ("Sorry", 165, 100)
         ctx.fillText ("You have lost the Canvas Bowl", 165, 300)
     } else {
@@ -268,33 +297,37 @@ const reset = function () {
     })
     joBackson.x = 210
     joBackson.y = 220
+    sideScrollActive = true
     if (totalGameTime > 0) {
         gameActive = true
     } else {
         gameResult()
     }
-    console.log("reset")
 }
 
 function computerDriveTimeout() {
-    ctx.clearRect(0,0, canvas.width, canvas.height)
-    originX = -300
-    originY = 0
-    renderField() 
-    computerDriveLogic()
-    renderComputerDriveSummary()
-    console.log('computerDriveTimeout')
-    setTimeout(reset, 3000)
+    if (totalGameTime > 0) {
+        ctx.clearRect(0,0, canvas.width, canvas.height)
+        originX = -300
+        originY = 0
+        renderField() 
+        computerDriveLogic()
+        renderComputerDriveSummary()
+        console.log('computerDriveTimeout')
+        setTimeout(reset, 3000)
+    } else {
+        reset()
+    }
 }
 
 // Check for collision with defenders
 
 
-// const sideScroll = setInterval(function () {
-    //     if (originX >= -610) {
-        //     originX -= 5
-        //     }
-        // }, 300)
+const sideScroll = setInterval(function () {
+        if (originX >= -610 && sideScrollActive) {
+            originX -= 5
+            }
+        }, 300)
         
 // sideScroll() 
 
@@ -311,13 +344,20 @@ function handleKeyPressEvent(e) {
             } else {
                 joBackson.y -= speed
             }
-            joImgMove()
+            sideScrollActive = false
+            // joImgMove()
             break
         case "s":
         case "ArrowDown":
             e.preventDefault()
-            joBackson.y += speed
-            joImgMove()
+            if (originY > 0) {
+                originY -= speed
+                console.log(joBackson.y, originY)
+            } else {
+                joBackson.y += speed
+            }
+            sideScrollActive = false
+            // joImgMove()
             break
         case "a":
         case "ArrowLeft":
@@ -329,7 +369,8 @@ function handleKeyPressEvent(e) {
             } else {
                 originX += speed
             }
-            joImgMove()
+            sideScrollActive = false
+            // joImgMove()
             break
         case "d":
         case "ArrowRight":
@@ -342,7 +383,8 @@ function handleKeyPressEvent(e) {
             else {
                 originX -= speed
             }
-            joImgMove()
+            sideScrollActive = false
+            // joImgMove()
             break
         // case "Enter":
         //     clearInterval(computerDriveInterval)
@@ -357,10 +399,13 @@ function gameLoop () {
     if (gameActive) {
         // clear off render
         if (totalGameTime === 0) {
-            ctx.font = "50px Sans Serif"
+            ctx.font = "50px bungee"
             ctx.fillText ("Last Play", 150, 100)
         }
         ctx.clearRect(0,0, canvas.width, canvas.height)
+        // do all of the rendering
+        renderField()
+        renderPlayers()
         // check for collision
             // touchdown
             touchdownCheck()
@@ -374,7 +419,7 @@ function gameLoop () {
                 const bottom = i.y + i.height + originY>= joBackson.y
                 if (left && right && top && bottom && isTackled == false) {
                     isTackled = true
-                    ctx.font = "50px Sans Serif"
+                    ctx.font = "50px bungee"
                     ctx.fillText ("TACKLED", 150, 100)
                     gameActive = false
                     setTimeout(computerDriveTimeout, 1000)
@@ -383,9 +428,6 @@ function gameLoop () {
             })
         // check game conditions
         console.log(gameActive)
-        // do all of the rendering
-        renderField()
-        renderPlayers()
         // Move defensive players
         const moveDefense = defenderArray.forEach(function(i) {
             const defenderSpeed = 1
