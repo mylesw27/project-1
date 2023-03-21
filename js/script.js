@@ -53,6 +53,7 @@ const titleScreen = setInterval(function() {
 
 
 const clearTitleScreen =  function() {
+    titleScreenActive = false
     clearInterval(titleScreen)
     scoreboard.style.display = "grid"
     joBackson.x = 150
@@ -170,20 +171,23 @@ let renderComputerDriveSummary = function () {
     ctx.fillStyle = "orange"
     ctx.roundRect(150, 50, 300, 450, 5)
     ctx.fill()
+    ctx.textAlign = "center"
     ctx.fillStyle = "black"
     ctx.font = "25px bungee"
-    ctx.fillText ("Defender's", 230, 100)
-    ctx.fillText ("Drive Summary", 195, 130)
+    ctx.fillText ("Defender's", 300, 100)
+    ctx.fillText ("Drive Summary", 300, 130)
+    ctx.textAlign = "left"
     ctx.fillText ("Time :", 165, 200)
     ctx.fillText ("Yards :", 165, 300)
     ctx.fillText ("Points :", 165, 400)
+    ctx.textAlign = "right"
     if (compDriveTime <= 9) {
-        ctx.fillText (`0:0${compDriveTime}`, 375, 200)
+        ctx.fillText (`0:0${compDriveTime}`, 425, 200)
     } else {
-        ctx.fillText (`0:${compDriveTime}`, 375, 200)
+        ctx.fillText (`0:${compDriveTime}`, 425, 200)
     }
-    ctx.fillText (`${compDriveYards}`, 375, 300)
-    ctx.fillText (`${compDriveScore}`, 375, 400)
+    ctx.fillText (`${compDriveYards}`, 425, 300)
+    ctx.fillText (`${compDriveScore}`, 425, 400)
     if (gameClockSeconds <=9) {
         clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
     } else {
@@ -288,23 +292,27 @@ const touchdownCheck = function() {
         userScore += 7
         userScoreDisplay.innerText = `${userScore}`
         ctx.font = "50px bungee"
-        ctx.fillText ("TOUCHDOWN", 50, 300)
+        ctx.textAlign = "left"
+        ctx.fillText ("TOUCHDOWN", 50, 100+originY)
         setTimeout(computerDriveTimeout, 1000)
         console.log("Touchdown")
     }
 }
 
+const printOutOfBounds = function() {
+    ctx.font = "50px bungee"
+    ctx.textAlign = "left"
+    ctx.fillText ("Out of Bounds", 20, 100+originY)
+}
+
 const outOfBoundsCheck = function() {
     if (joBackson.y <= 50 && originY >= 80) {
         gameActive = false
-        ctx.font = "50px bungee"
-        ctx.fillText ("Out of Bounds", 50, 300)
+        printOutOfBounds()
         setTimeout(computerDriveTimeout, 1000)
     } else if (joBackson.y + joBackson.height > 670) {
         gameActive = false
-        ctx.font = "50px bungee"
-        ctx.fillText ("Out of Bounds", 50, 300)
-        setTimeout(computerDriveTimeout, 1000)
+        printOutOfBounds()
     }
 }
 
@@ -313,14 +321,16 @@ const gameResult = function() {
         ctx.clearRect(0,0, canvas.width, canvas.height)
         ctx.fillStyle = "black"
         ctx.font = "25px bungee"
-        ctx.fillText ("CONGRATULATIONS!!", 165, 100)
-        ctx.fillText ("You have won the Canvas Bowl", 165, 300)
+        ctx.textAlign = "center"
+        ctx.fillText ("CONGRATULATIONS!!", 300, 100)
+        ctx.fillText ("You have won the Canvas Bowl", 300, 300)
     } else if (userScore < compScore) {
         ctx.clearRect(0,0, canvas.width, canvas.height)
         ctx.fillStyle = "black"
         ctx.font = "25px bungee"
-        ctx.fillText ("Sorry", 165, 100)
-        ctx.fillText ("You have lost the Canvas Bowl", 165, 300)
+        ctx.textAlign = "center"
+        ctx.fillText ("Sorry", 300, 100)
+        ctx.fillText ("You have lost the Canvas Bowl", 300, 300)
     } else {
         totalGameTime = 30
         gameActive = true
@@ -358,8 +368,6 @@ function computerDriveTimeout() {
         reset()
     }
 }
-
-// Check for collision with defenders
 
 
 const sideScroll = setInterval(function () {
@@ -405,6 +413,8 @@ function handleKeyPressEvent(e) {
                 joBackson.x -= speed
             } else if (joBackson.x > 210 && originX <= -600){
                 joBackson.x -= speed
+            } else if (originX > 0) {
+                joBackson.x -= speed
             } else {
                 originX += speed
             }
@@ -414,11 +424,11 @@ function handleKeyPressEvent(e) {
         case "d":
         case "ArrowRight":
             e.preventDefault()
-            if (joBackson.x < 210 && originX === 0) {
+            if (joBackson.x < 210 && originX >= 0) {
                 joBackson.x += speed
             } else if (joBackson.x >= 210 && originX <= -600) {
                 joBackson.x += speed
-            } 
+            }
             else {
                 originX -= speed
             }
@@ -461,7 +471,8 @@ function gameLoop () {
                 if (left && right && top && bottom && isTackled == false) {
                     isTackled = true
                     ctx.font = "50px bungee"
-                    ctx.fillText ("TACKLED", 150, 100)
+                    ctx.textAlign = "left"
+                    ctx.fillText ("TACKLED", 20, 100+originY)
                     gameActive = false
                     setTimeout(computerDriveTimeout, 1000)
                 }
