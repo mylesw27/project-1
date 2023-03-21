@@ -74,7 +74,6 @@ const clearTitleScreen =  function() {
 const joImgMove = function (){
     if (joCurrentImage >= joImgArray.length - 1){
         joCurrentImage = 0
-        console.log("joimg")
     } else {
         joCurrentImage ++
     }    
@@ -92,7 +91,6 @@ const clockTick = function(){
     } else if (totalGameTime > 0){
         gameClockMinutes = Math.floor(totalGameTime / 60)
         gameClockSeconds = totalGameTime % 60
-        console.log(`${gameClockMinutes} : ${gameClockSeconds}`)
     }  else if (totalGameTime <= 0) {
         gameClockMinutes = 0
         gameClockSeconds = 0
@@ -147,7 +145,6 @@ let computerDriveLogic = function() {
         if (totalGameTime <= 0) {
             totalGameTime = 0
             clock.innerText = "0:00"
-            console.log("0:00")
         } else {
             totalGameTime = totalGameTime - compDriveTime
         }
@@ -294,7 +291,7 @@ const touchdownCheck = function() {
         ctx.font = "50px bungee"
         ctx.textAlign = "left"
         ctx.fillText ("TOUCHDOWN", 50, 100+originY)
-        setTimeout(computerDriveTimeout, 1000)
+        setTimeout(touchdownTimeout, 1000)
         console.log("Touchdown")
     }
 }
@@ -309,10 +306,11 @@ const outOfBoundsCheck = function() {
     if (joBackson.y <= 50 && originY >= 80) {
         gameActive = false
         printOutOfBounds()
-        setTimeout(computerDriveTimeout, 1000)
+        setTimeout(outOfBoundsTimeout, 1000)
     } else if (joBackson.y + joBackson.height > 670) {
         gameActive = false
         printOutOfBounds()
+        setTimeout(outOfBoundsTimeout, 1000)
     }
 }
 
@@ -354,6 +352,53 @@ const reset = function () {
     }
 }
 
+function timeOutTemplate() {
+    ctx.clearRect(0,0, canvas.width, canvas.height)
+    originX = -300
+    originY = 0
+    renderField() 
+    ctx.strokeStyle = "redorange"
+    ctx.beginPath()
+    ctx.roundRect(148, 48, 316, 466, 5)
+    ctx.stroke()
+    ctx.fillStyle = "orange"
+    ctx.roundRect(150, 50, 300, 450, 5)
+    ctx.fill()
+}
+
+function tackledTimeout() {
+    timeOutTemplate()
+    ctx.textAlign = "center"
+    ctx.fillStyle = "black"
+    ctx.font = "50px bungee"
+    ctx.fillText ("Ouch!", 300, 100)
+    ctx.font = "20px bungee"
+    ctx.fillText ("Tackled on the play!", 300, 175)
+    ctx.fillText ("Defender's Turn!", 300, 300)
+    setTimeout(computerDriveTimeout, 3000)
+}
+
+function outOfBoundsTimeout() {
+    timeOutTemplate()
+    ctx.textAlign = "center"
+    ctx.fillStyle = "black"
+    ctx.font = "50px bungee"
+    ctx.fillText ("Careful!", 300, 100)
+    ctx.font = "20px bungee"
+    ctx.fillText ("Stepped out of bounds!", 300, 175)
+    ctx.fillText ("Defender's Turn!", 300, 300)
+    setTimeout(computerDriveTimeout, 3000)
+}
+
+function touchdownTimeout () {
+    timeOutTemplate()
+    ctx.textAlign = "center"
+    ctx.fillStyle = "black"
+    ctx.font = "35px bungee"
+    ctx.fillText ("Touchdown!!", 300, 100)
+    setTimeout(computerDriveTimeout, 3000)
+}
+
 function computerDriveTimeout() {
     if (totalGameTime > 0) {
         ctx.clearRect(0,0, canvas.width, canvas.height)
@@ -362,7 +407,6 @@ function computerDriveTimeout() {
         renderField() 
         computerDriveLogic()
         renderComputerDriveSummary()
-        console.log('computerDriveTimeout')
         setTimeout(reset, 3000)
     } else {
         reset()
@@ -387,7 +431,6 @@ function handleKeyPressEvent(e) {
             e.preventDefault()
             if (joBackson.y < 50) {
                 originY += speed
-                console.log(joBackson.y, originY)
             } else {
                 joBackson.y -= speed
             }
@@ -399,7 +442,6 @@ function handleKeyPressEvent(e) {
             e.preventDefault()
             if (originY > 0) {
                 originY -= speed
-                console.log(joBackson.y, originY)
             } else {
                 joBackson.y += speed
             }
@@ -409,7 +451,9 @@ function handleKeyPressEvent(e) {
         case "a":
         case "ArrowLeft":
             e.preventDefault()
-            if (joBackson.x <= 210 && originX === 0 ) {
+            if (joBackson.x <= 30) {
+            console.log(joBackson.x)
+            } else if (joBackson.x <= 210 && originX >= 0 ) {
                 joBackson.x -= speed
             } else if (joBackson.x > 210 && originX <= -600){
                 joBackson.x -= speed
@@ -440,6 +484,9 @@ function handleKeyPressEvent(e) {
                 clearTitleScreen()
             }
             break
+        case "*":                                            // ***** CODE FOR TESTING. REMOVE BEFORE FINALIZING GAME *****
+            e.preventDefault()
+            totalGameTime = 5
     }
 }
 
@@ -449,14 +496,15 @@ document.addEventListener("keydown", handleKeyPressEvent)
 function gameLoop () {
     if (gameActive) {
         // clear off render
-        if (totalGameTime === 0) {
-            ctx.font = "50px bungee"
-            ctx.fillText ("Last Play", 150, 100)
-        }
         ctx.clearRect(0,0, canvas.width, canvas.height)
         // do all of the rendering
         renderField()
         renderPlayers()
+        if (totalGameTime <= 0) {
+            ctx.textAlign = "center"
+            ctx.font = "20px bungee"
+            ctx.fillText ("Last Play", 300, 50)
+        }
         // check for collision
             // touchdown
             touchdownCheck()
@@ -474,12 +522,10 @@ function gameLoop () {
                     ctx.textAlign = "left"
                     ctx.fillText ("TACKLED", 20, 100+originY)
                     gameActive = false
-                    setTimeout(computerDriveTimeout, 1000)
+                    setTimeout(tackledTimeout, 1000)
                 }
             
             })
-        // check game conditions
-        console.log(gameActive)
         // Move defensive players
         const moveDefense = defenderArray.forEach(function(i) {
             const defenderSpeed = 1

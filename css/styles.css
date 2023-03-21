@@ -27,12 +27,12 @@ canvas {
 #scoreboard {
     background-color: gray;
     height: 60px;
-    width: 1200px;;
+    width: 1200px;
     display: none;
-    grid-template-columns: 300px 200px 200px 200px 200px;
+    grid-template-columns: 60px 200px 200px 1fr 200px 200px 60px;
     grid-template-rows: 60px;
     grid-template-areas: 
-    "userTeamInfo userTeamScore clock compTeamScore compTeamInfo";
+    "userTeamLogo userTeamInfo userTeamScore clock compTeamScore compTeamInfo compTeamLogo";
     font-family: 'Bungee', cursive;
 }
 
@@ -42,6 +42,19 @@ canvas {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#userTeamLogoDiv {
+    grid-area: userTeamLogo;
+    /* background-color: hotpink; */
+    height: 60;
+}
+
+#userLogo {
+    display: flex;
+    width: 60px;
+    height: 60px;
+    /* background-color: orange; */
 }
 
 #userTeamScoreDiv {
@@ -74,6 +87,15 @@ canvas {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#compTeamLogoDiv {
+    grid-area: compTeamLogo;
+}
+
+#compLogo {
+    height: 60px;
+    width: 60px;
 }
 
 .joImages {
