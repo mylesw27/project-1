@@ -4,6 +4,9 @@ const userScoreDisplay = document.querySelector("#userScore")
 const compScoreDisplay = document.querySelector("#compScore")
 const canvas = document.querySelector("canvas")
 const joImg1 = document.querySelector("#joImg1")
+const joImg2 = document.querySelector("#joImg2")
+const joImg3 = document.querySelector("#joImg3")
+const joImg4 = document.querySelector("#joImg4")
 
 // Canvas Setup
 const ctx = canvas.getContext("2d")
@@ -13,21 +16,30 @@ canvas.setAttribute('width', 600)
 
 let originX = 0
 let originY = 0 
-
 let isTouchdown = false
 let isTackled = false
 let isOutOfBounds = false
-
 let userScore = 0
 let compScore = 0
-
 let totalGameTime = 120
 let gameClockMinutes = Math.floor(totalGameTime / 60)
 let gameClockSeconds = totalGameTime % 60
-
 let gameActive = true
 let touchDownActive = false
 clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
+const joImgArray = [joImg1, joImg2, joImg3, joImg4]
+let joCurrentImage = 0
+
+const joImgMove = function (){
+    if (joCurrentImage >= joImgArray.length - 1){
+        joCurrentImage = 0
+        console.log("joimg")
+    } else {
+        joCurrentImage ++
+    }    
+}
+
+// const joImgInterval = setInterval(joImgMove, 500)
 
 const clockTick = function(){
     // reduce clock by 1 second if game is active and total time is more than zero
@@ -54,9 +66,9 @@ const clockTick = function(){
 let renderField = function () {
     // Create End Zones
     ctx.fillStyle = "blue"
-    ctx.fillRect(originX+15, 20, 100, 650) // Left End Zone
+    ctx.fillRect(originX+15, originY+20, 100, 650) // Left End Zone
     ctx.fillStyle = "red"
-    ctx.fillRect(originX+1080, 20, 100, 650) // Right End Zone
+    ctx.fillRect(originX+1080, originY+20, 100, 650) // Right End Zone
 
 
     // Create Side Lines
@@ -148,7 +160,7 @@ class fbPlayer {
     
     render() {
         ctx.fillStyle = this.color
-        ctx.fillRect(this.x+originX, this.y, this.width, this.height)
+        ctx.fillRect(this.x+originX, this.y+originY, this.width, this.height)
     }
 }
 
@@ -158,10 +170,11 @@ class userFBPlayer extends fbPlayer {
         super(x, y)
         this.color = "blue"
     }
+
     render() {
         ctx.fillStyle = this.color
-        ctx.fillRect(this.x, this.y, this.width, this.height)
-        ctx.drawImage(joImg1, this.x, this.y, 25, 60)
+        // ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.drawImage(joImgArray[joCurrentImage], this.x, this.y, 25, 60)
     }
 }
 
@@ -225,6 +238,12 @@ const touchdownCheck = function() {
     }
 }
 
+const outOfBoundsCheck = function() {
+    if (joBackson.y <= 50 && originY >= 80) {
+        console.log("OB")
+    }
+}
+
 const gameResult = function() {
     if (userScore > compScore) {
         ctx.clearRect(0,0, canvas.width, canvas.height)
@@ -260,6 +279,7 @@ const reset = function () {
 function computerDriveTimeout() {
     ctx.clearRect(0,0, canvas.width, canvas.height)
     originX = -300
+    originY = 0
     renderField() 
     computerDriveLogic()
     renderComputerDriveSummary()
@@ -285,12 +305,19 @@ function handleKeyPressEvent(e) {
         case "w":
         case "ArrowUp":
             e.preventDefault()
-            joBackson.y -= speed
+            if (joBackson.y < 50) {
+                originY += speed
+                console.log(joBackson.y, originY)
+            } else {
+                joBackson.y -= speed
+            }
+            joImgMove()
             break
         case "s":
         case "ArrowDown":
             e.preventDefault()
             joBackson.y += speed
+            joImgMove()
             break
         case "a":
         case "ArrowLeft":
@@ -302,6 +329,7 @@ function handleKeyPressEvent(e) {
             } else {
                 originX += speed
             }
+            joImgMove()
             break
         case "d":
         case "ArrowRight":
@@ -314,6 +342,7 @@ function handleKeyPressEvent(e) {
             else {
                 originX -= speed
             }
+            joImgMove()
             break
         // case "Enter":
         //     clearInterval(computerDriveInterval)
@@ -336,7 +365,7 @@ function gameLoop () {
             // touchdown
             touchdownCheck()
             // out of bounds
-            // outOfBoundsCheck ()
+            outOfBoundsCheck ()
             // tackle
             const tackleCheck = defenderArray.forEach(function (i) {
                 const left = i.x + originX <= joBackson.width + joBackson.x
