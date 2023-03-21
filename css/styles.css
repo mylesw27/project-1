@@ -28,7 +28,7 @@ canvas {
     background-color: gray;
     height: 60px;
     width: 1200px;;
-    display: grid;
+    display: none;
     grid-template-columns: 300px 200px 200px 200px 200px;
     grid-template-rows: 60px;
     grid-template-areas: 

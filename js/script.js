@@ -1,4 +1,5 @@
 // DOM Selectors
+const scoreboard = document.querySelector("#scoreboard")
 const clock = document.querySelector("#clock")
 const userScoreDisplay = document.querySelector("#userScore")
 const compScoreDisplay = document.querySelector("#compScore")
@@ -24,12 +25,44 @@ let compScore = 0
 let totalGameTime = 120
 let gameClockMinutes = Math.floor(totalGameTime / 60)
 let gameClockSeconds = totalGameTime % 60
-let gameActive = true
+let gameActive = false
 let touchDownActive = false
 clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
 const joImgArray = [joImg1, joImg2, joImg3, joImg4]
 let joCurrentImage = 0
 let sideScrollActive = true
+let titleScreenActive = true
+
+const titleScreen = setInterval(function() {
+    ctx.strokeStyle = "redorange"
+    ctx.beginPath()
+    ctx.roundRect(3, 3, 592, 600, 5)
+    ctx.stroke()
+    ctx.fillStyle = "orange"
+    ctx.roundRect(5, 5, 590, 595, 5)
+    ctx.fill()
+    ctx.fillStyle = "black"
+    ctx.font = "25px bungee"
+    ctx.fillText ("Welcome to", 300, 100)
+    ctx.font = "50px bungee"
+    ctx.textAlign = "center"
+    ctx.fillText ("MVP SUPERBACK", 300, 200)
+    ctx.fillText ("FOOTBALL", 300, 300)
+}, 60)
+
+// const titleScreenTransition = setInterval(function() {
+//     ctx.clearRect(0,0, canvas.width, canvas.height)
+//     renderField()
+//     renderPlayers()
+// }, 60)
+
+
+const clearTitleScreen =  function() {
+    clearInterval(titleScreen)
+    gameActive = true
+    scoreboard.style.display = "grid"
+    console.dir(scoreboard)
+}
 
 const joImgMove = function (){
     if (joCurrentImage >= joImgArray.length - 1){
@@ -386,9 +419,11 @@ function handleKeyPressEvent(e) {
             sideScrollActive = false
             // joImgMove()
             break
-        // case "Enter":
-        //     clearInterval(computerDriveInterval)
-        //     break
+        case "Enter":
+            if (titleScreenActive) {
+                clearTitleScreen()
+            }
+            break
     }
 }
 
