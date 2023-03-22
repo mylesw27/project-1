@@ -8,6 +8,11 @@ const joImg1 = document.querySelector("#joImg1")
 const joImg2 = document.querySelector("#joImg2")
 const joImg3 = document.querySelector("#joImg3")
 const joImg4 = document.querySelector("#joImg4")
+const defenderImg1 = document.querySelector("#defenderImg1")
+const defenderImg2 = document.querySelector("#defenderImg2")
+const defenderImg3 = document.querySelector("#defenderImg3")
+const defenderImg4 = document.querySelector("#defenderImg4")
+const arrowkeys = document.querySelector("#arrowkeys")
 
 // Canvas Setup
 const ctx = canvas.getContext("2d")
@@ -29,25 +34,29 @@ let gameActive = false
 let touchDownActive = false
 clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
 const joImgArray = [joImg1, joImg2, joImg3, joImg4]
+const defenderImgArray = [defenderImg1, defenderImg2, defenderImg3, defenderImg4]
 let joCurrentImage = 0
+let defenderCurrentImage = 0
 let sideScrollActive = true
 let titleScreenActive = true
 
 const titleScreen = setInterval(function() {
-    ctx.strokeStyle = "redorange"
-    ctx.beginPath()
-    ctx.roundRect(3, 3, 592, 600, 5)
-    ctx.stroke()
-    ctx.fillStyle = "orange"
-    ctx.roundRect(5, 5, 590, 595, 5)
-    ctx.fill()
-    ctx.fillStyle = "black"
+    // ctx.strokeStyle = "redorange"
+    // ctx.beginPath()
+    // ctx.roundRect(3, 3, 592, 600, 5)
+    // ctx.stroke()
+    // ctx.fillStyle = "orange"
+    // ctx.roundRect(5, 5, 590, 595, 5)
+    // ctx.fill()
+    ctx.textAlign = "center"
+    ctx.fillStyle = "White"
     ctx.font = "25px bungee"
     ctx.fillText ("Welcome to", 300, 100)
     ctx.font = "50px bungee"
     ctx.textAlign = "center"
     ctx.fillText ("MVP SUPERBACK", 300, 200)
     ctx.fillText ("FOOTBALL", 300, 300)
+    ctx.drawImage (arrowkeys, 100, 300, 400, 600)
 }, 60)
 
 
@@ -79,7 +88,16 @@ const joImgMove = function (){
     }    
 }
 
+const defenderImgMove = function (){
+    if (defenderCurrentImage >= defenderImgArray.length - 1){
+        defenderCurrentImage = 0
+    } else {
+        defenderCurrentImage ++
+    }    
+}
+
 const joImgInterval = setInterval(joImgMove, 350)
+const defenderImgInterval = setInterval(defenderImgMove, 350)
 
 const clockTick = function(){
     // reduce clock by 1 second if game is active and total time is more than zero
@@ -237,6 +255,12 @@ class defender extends fbPlayer {
     constructor (x, y, color) {
         super(x, y, color)
         this.color = color
+    }
+
+    render() {
+        ctx.fillStyle = this.color
+        // ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.drawImage(defenderImgArray[defenderCurrentImage], this.x+originX, this.y+originY, 25, 60)
     }
 }
 
