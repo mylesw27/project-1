@@ -12,6 +12,17 @@ const defenderImg1 = document.querySelector("#defenderImg1")
 const defenderImg2 = document.querySelector("#defenderImg2")
 const defenderImg3 = document.querySelector("#defenderImg3")
 const defenderImg4 = document.querySelector("#defenderImg4")
+const defenderflippedImg1 = document.querySelector("#defenderImg1flipped")
+const defenderflippedImg2 = document.querySelector("#defenderImg2flipped")
+const defenderflippedImg3 = document.querySelector("#defenderImg3flipped")
+const defenderflippedImg4 = document.querySelector("#defenderImg4flipped")
+const defenderUpImg1 = document.querySelector("#defenderUp1")
+const defenderUpImg2 = document.querySelector("#defenderUp2")
+const defenderDownImg1 = document.querySelector("#defenderDown1")
+const defenderDownImg2 = document.querySelector("#defenderDown2")
+const teammateImg1 = document.querySelector("#teammate1")
+const teammateImg2 = document.querySelector("#teammate2")
+
 const arrowkeys = document.querySelector("#arrowkeys")
 
 // Canvas Setup
@@ -35,19 +46,19 @@ let touchDownActive = false
 clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
 const joImgArray = [joImg1, joImg2, joImg3, joImg4]
 const defenderImgArray = [defenderImg1, defenderImg2, defenderImg3, defenderImg4]
+const defenderflippedImgArray = [defenderflippedImg1, defenderflippedImg2, defenderflippedImg3, defenderflippedImg4]
+const defenderUpImgArray = [defenderUpImg1, defenderUpImg2]
+const defenderDownImgArray = [defenderDownImg1, defenderDownImg2]
+const teammateImgArray = [teammateImg1, teammateImg2]
 let joCurrentImage = 0
 let defenderCurrentImage = 0
+let defenderVerticalImage = 0
+let teammateCurrentImage = 0
 let sideScrollActive = true
 let titleScreenActive = true
 
 const titleScreen = setInterval(function() {
-    // ctx.strokeStyle = "redorange"
-    // ctx.beginPath()
-    // ctx.roundRect(3, 3, 592, 600, 5)
-    // ctx.stroke()
-    // ctx.fillStyle = "orange"
-    // ctx.roundRect(5, 5, 590, 595, 5)
-    // ctx.fill()
+
     ctx.textAlign = "center"
     ctx.fillStyle = "White"
     ctx.font = "25px bungee"
@@ -96,8 +107,27 @@ const defenderImgMove = function (){
     }    
 }
 
+const defenderUpImgMove = function (){
+    if (defenderVerticalImage >= defenderUpImgArray.length - 1){
+        defenderVerticalImage = 0
+    } else {
+        defenderVerticalImage ++
+    }    
+}
+
+const teammateImgMove = function (){
+    if (teammateCurrentImage >= teammateImgArray.length - 1){
+        teammateCurrentImage = 0
+    } else {
+        teammateCurrentImage ++
+    }  
+}
+
 const joImgInterval = setInterval(joImgMove, 350)
 const defenderImgInterval = setInterval(defenderImgMove, 350)
+// const defenderflippedImgInterval = setInterval(defenderflippedImgMove, 350)
+const defenderVerticalImageInterval = setInterval(defenderUpImgMove, 350)
+const teammateImageInterval = setInterval(teammateImgMove, 350)
 
 const clockTick = function(){
     // reduce clock by 1 second if game is active and total time is more than zero
@@ -232,12 +262,16 @@ class fbPlayer {
 class userFBPlayer extends fbPlayer {
     constructor (x, y) {
         super(x, y)
-        this.color = "blue"
+        this.color = "white"
     }
 
     render() {
         ctx.fillStyle = this.color
         // ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.strokeStyle = "white"
+        ctx.beginPath()
+        ctx.ellipse(this.x+12, this.y+55, 15, 10, 0, 0, 2 * Math.PI)
+        ctx.stroke()
         ctx.drawImage(joImgArray[joCurrentImage], this.x, this.y, 25, 60)
     }
 }
@@ -246,21 +280,34 @@ class userFBPlayer extends fbPlayer {
 class teammate extends fbPlayer {
     constructor (x, y) {
         super(x, y)
-        this.color = "blue"
+        this.color = "white"
+    }
+
+    render() {
+        ctx.drawImage(teammateImgArray[teammateCurrentImage], this.x+originX, this.y+originY, 25, 60)
     }
 }
 
 // Child class of football players for defenders
 class defender extends fbPlayer {
-    constructor (x, y, color) {
+    constructor (x, y, color, number) {
         super(x, y, color)
         this.color = color
+        this.playerNumber = `${number}`
     }
 
     render() {
         ctx.fillStyle = this.color
         // ctx.fillRect(this.x, this.y, this.width, this.height)
-        ctx.drawImage(defenderImgArray[defenderCurrentImage], this.x+originX, this.y+originY, 25, 60)
+        if (joBackson.x < this.x+originX) {
+            ctx.drawImage(defenderImgArray[defenderCurrentImage], this.x+originX, this.y+originY, 25, 60)
+        } else if (joBackson.x > this.x+originX) {
+            ctx.drawImage(defenderflippedImgArray[defenderCurrentImage], this.x+originX, this.y+originY, 25, 60)
+        } else if (joBackson.x === this.x+originX && joBackson.y < this.y+originY) {
+            ctx.drawImage(defenderUpImgArray[defenderVerticalImage], this.x+originX, this.y+originY, 25, 60)
+        } else if (joBackson.x === this.x+originX && joBackson.y > this.y+originY) {
+            ctx.drawImage(defenderDownImgArray[defenderVerticalImage], this.x+originX, this.y+originY, 25, 60)
+        }
     }
 }
 
@@ -268,34 +315,37 @@ class defender extends fbPlayer {
 // Game objects
 // const newPlayer = new fbPlayer(256, 220, "purple")  // Test Player 
 const joBackson = new userFBPlayer(210,220)
-const defender1 = new defender(580, 75, "green") // CB (top of screen)
-const defender2 = new defender(1000, 186, "purple") // Safety (top of screen)
-const defender3 = new defender(450, 150, "yellow") // DE (top of screen)
-const defender4 = new defender(800, 150, "orange") // OLB (top of screen)
-const defender5 = new defender(450, 220, "red") // DT (top of screen)
-const defender6 = new defender(700, 250, "blue") // MLB
-const defender7 = new defender(450, 300, "lime") // DT (bottom of screen)
-const defender8 = new defender(700, 350, "aqua") // OLB (bottom of screen)
-const defender9 = new defender(450, 400, "hotpink") // (DE (bottom of screen)
-const defender10 = new defender(1000, 400, "grey") // Safety (bottom of screen)
-const defender11 = new defender(580, 525, "white") // CB (bottom of screen)
-// const defender1 = new defender(390, 75, "green") // CB (top of screen)
-// const defender2 = new defender(500, 186, "purple") // Safety (top of screen)
-// const defender3 = new defender(350, 150, "yellow") // DE (top of screen)
-// const defender4 = new defender(400, 150, "orange") // OLB (top of screen)
-// const defender5 = new defender(350, 220, "red") // DT (top of screen)
-// const defender6 = new defender(400, 250, "blue") // MLB
-// const defender7 = new defender(350, 300, "lime") // DT (bottom of screen)
-// const defender8 = new defender(400, 350, "aqua") // OLB (bottom of screen)
-// const defender9 = new defender(350, 400, "hotpink") // (DE (bottom of screen)
-// const defender10 = new defender(500, 400, "grey") // Safety (bottom of screen)
-// const defender11 = new defender(420, 525, "white") // CB (bottom of screen)
+const defender1 = new defender(580, 75, 1) // CB (top of screen)
+const defender2 = new defender(1000, 186, 2) // Safety (top of screen)
+const defender3 = new defender(450, 150, 3) // DE (top of screen)
+const defender4 = new defender(800, 150, 4) // OLB (top of screen)
+const defender5 = new defender(450, 220, 5) // DT (top of screen)
+const defender6 = new defender(700, 250, 6) // MLB
+const defender7 = new defender(450, 300, 7) // DT (bottom of screen)
+const defender8 = new defender(700, 350, 8) // OLB (bottom of screen)
+const defender9 = new defender(450, 400, 9) // (DE (bottom of screen)
+const defender10 = new defender(1000, 400, 10) // Safety (bottom of screen)
+const defender11 = new defender(580, 525, 11) // CB (bottom of screen)
+const teammate1 = new teammate(295, 220)
+const teammate2 = new teammate(300, 75)
+const teammate3 = new teammate(310, 170)
+const teammate4 = new teammate(310, 190)
+const teammate5 = new teammate(310, 210)
+const teammate6 = new teammate(310, 230)
+const teammate7 = new teammate(310, 250)
+const teammate8 = new teammate(310, 275)
+const teammate9 = new teammate(300, 420)
+const teammate10 = new teammate(300, 475)
 
+// console.log(teammateImgArr)
 
 const renderPlayers = function(){
     // newPlayer.render() // Test Player
     joBackson.render()
     defenderArray.forEach(function(i){
+        i.render()
+    })
+    teammateArray.forEach(function(i){
         i.render()
     })
 }
@@ -305,6 +355,10 @@ const clockTickInterval = setInterval(clockTick, 1000)
 const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
 const defenderOriginX = [580, 1000, 450, 800, 450, 700, 450, 700, 450, 1000, 580]
 const defenderOriginY = [75, 186, 150, 150, 220, 250, 300, 350, 400, 400, 525]
+const teammateArray = [teammate1, teammate2, teammate3, teammate4, teammate5, teammate6, teammate7, teammate8, teammate9, teammate10]
+const teammateOriginX = [295, 300, 310, 310, 310, 310, 310, 310, 300, 300]
+const teammateOriginY = [220, 75, 170, 190, 210, 230, 250, 275, 420, 475]
+
 
 // Check for touchdown collision
 const touchdownCheck = function() {
@@ -362,9 +416,13 @@ const reset = function () {
     originX = 0
     originY = 0
     isTackled = false
-    const resetDefenders = defenderArray.forEach(function(defenderArr,i) {
-        defenderArr.x = defenderOriginX[i]
-        defenderArr.y = defenderOriginY[i]
+    const resetDefenders = defenderArray.forEach(function(defenderArray,i) {
+        defenderArray.x = defenderOriginX[i]
+        defenderArray.y = defenderOriginY[i]
+    })
+    const resetTeammates = teammateArray.forEach(function(teammateArray,i) {
+        teammateArray.x = teammateOriginX[i]
+        teammateArray.y = teammateOriginY[i]
     })
     joBackson.x = 210
     joBackson.y = 220
@@ -438,13 +496,15 @@ function computerDriveTimeout() {
 }
 
 
-const sideScroll = setInterval(function () {
-        if (originX >= -610 && sideScrollActive) {
-            originX -= 5
-            }
-        }, 300)
-        
+// const sideScroll = setInterval(function () {
+//         if (originX >= -610 && sideScrollActive) {
+//             originX -= 5
+//             }
+//         }, 300)
+
 // sideScroll() 
+
+
 
 // Map Keys (function handleKeyPressEvent with switch)
 function handleKeyPressEvent(e) {
@@ -536,10 +596,10 @@ function gameLoop () {
             outOfBoundsCheck ()
             // tackle
             const tackleCheck = defenderArray.forEach(function (i) {
-                const left = i.x + originX <= joBackson.width + joBackson.x
-                const right = i.x + i.width + originX >= joBackson.x
-                const top = i.y + originY <= joBackson.y + joBackson.height
-                const bottom = i.y + i.height + originY>= joBackson.y
+                const left = i.x + originX +10 <= joBackson.width + joBackson.x
+                const right = i.x + i.width + originX - 10>= joBackson.x
+                const top = i.y + originY + 20<= joBackson.y + joBackson.height
+                const bottom = i.y + i.height + originY - 20>= joBackson.y
                 if (left && right && top && bottom && isTackled == false) {
                     isTackled = true
                     ctx.font = "50px bungee"
@@ -553,16 +613,21 @@ function gameLoop () {
         // Move defensive players
         const moveDefense = defenderArray.forEach(function(i) {
             const defenderSpeed = 1
+
+            
             if (i.x + originX > joBackson.x){
                 i.x -= defenderSpeed
             } else if (i.x + originX < joBackson.x){
                 i.x += defenderSpeed
             }
             if (i.y > joBackson.y){
-                i.y -= defenderSpeed
+                i.y -= defenderSpeed*2
             } else if (i.y < joBackson.y){
-                i.y += defenderSpeed
+                i.y += defenderSpeed*2
             }
+        })
+        const moveTeammates = teammateArray.forEach(function(i) {
+            i.x += 1
         })
     }
 }
