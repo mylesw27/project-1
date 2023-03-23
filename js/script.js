@@ -24,7 +24,7 @@ const defenderDownImg2 = document.querySelector("#defenderDown2")
 const teammateImg1 = document.querySelector("#teammate1")
 const teammateImg2 = document.querySelector("#teammate2")
 const referee = document.querySelector("#referee")
-console.log(referee)
+const currentDownDisplay = document.querySelector("#currentDownDisplay")
 
 const arrowkeys = document.querySelector("#arrowkeys")
 
@@ -63,6 +63,7 @@ let upKeyPressed = false
 let downKeyPressed = false
 let leftKeyPressed = false
 let rightKeyPressed = false
+let currentDown = 1
 
 const titleScreen = setInterval(function() {
 
@@ -383,6 +384,45 @@ const touchdownCheck = function() {
     }
 }
 
+const downCheck = function() {
+    console.log(currentDown, "originx" + originX)
+    if (currentDown < 4) {
+        isTackled = false
+        originX = originX += 90
+        originY = 0
+        const resetDefenders = defenderArray.forEach(function(defenderArray,i) {
+            defenderArray.x = defenderOriginX[i] - (originX)
+            defenderArray.y = defenderOriginY[i]
+            if (defenderArray.x > 1200)
+                defenderArray.x = 1150
+        })
+        const resetTeammates = teammateArray.forEach(function(teammateArray,i) {
+            teammateArray.x = teammateOriginX[i] - originX
+            teammateArray.y = teammateOriginY[i] + originY
+        })
+        console.log(defender1.x)
+        joBackson.x = 210
+        joBackson.y = 220
+        sideScrollActive = true
+        if (totalGameTime > 0) {
+            gameActive = true
+        } else {
+            gameResult()
+        }
+        currentDown ++
+        if (currentDown == 2) {
+            currentDownDisplay.innerText = "2nd Down"
+        } else if (currentDown == 3) {
+            currentDownDisplay.innerText = "3rd Down"
+        } else if (currentDown == 4) {
+            currentDownDisplay.innerText = "4th Down"
+        }
+    } else {
+        setTimeout(computerDriveTimeout, 1000)
+        currentDown = 1
+    }
+}
+
 const printOutOfBounds = function() {
     ctx.font = "50px bungee"
     ctx.textAlign = "left"
@@ -435,6 +475,8 @@ const reset = function () {
     })
     joBackson.x = 210
     joBackson.y = 220
+    currentDown = 1
+    currentDownDisplay.innerText = "1st Down"
     sideScrollActive = true
     if (totalGameTime > 0) {
         gameActive = true
@@ -458,15 +500,15 @@ function timeOutTemplate() {
 }
 
 function tackledTimeout() {
-    timeOutTemplate()
-    ctx.textAlign = "center"
-    ctx.fillStyle = "black"
-    ctx.font = "50px bungee"
-    ctx.fillText ("Ouch!", 300, 100)
-    ctx.font = "20px bungee"
-    ctx.fillText ("Tackled on the play!", 300, 175)
-    ctx.fillText ("Defender's Turn!", 300, 300)
-    setTimeout(computerDriveTimeout, 3000)
+    // timeOutTemplate()
+    // ctx.textAlign = "center"
+    // ctx.fillStyle = "black"
+    // ctx.font = "50px bungee"
+    // ctx.fillText ("Ouch!", 300, 100)
+    // ctx.font = "20px bungee"
+    // ctx.fillText ("Tackled on the play!", 300, 175)
+    // ctx.fillText ("Defender's Turn!", 300, 300)
+    setTimeout(downCheck, 1000)
 }
 
 function outOfBoundsTimeout() {
@@ -478,7 +520,7 @@ function outOfBoundsTimeout() {
     ctx.font = "20px bungee"
     ctx.fillText ("Stepped out of bounds!", 300, 175)
     ctx.fillText ("Defender's Turn!", 300, 300)
-    setTimeout(computerDriveTimeout, 3000)
+    setTimeout(downCheck, 1000)
 }
 
 let refereePosition
@@ -547,61 +589,24 @@ function handleKeyPressEvent(e) {
             e.preventDefault()
             sideScrollActive = false
             upKeyPressed = true
-            console.log("upKeyDown")
-
-            // if (joBackson.y < 50) {
-            //     originY += speed
-            //     console.log(originY)
-            // } else {
-            //     joBackson.y -= speed
-            // }
             break
         case "s":
         case "ArrowDown":
             e.preventDefault()
             sideScrollActive = false
             downKeyPressed = true
-
-            // if (originY > 0) {
-            //     originY -= speed
-            // } else {
-            //     joBackson.y += speed
-            // }
             break
         case "a":
         case "ArrowLeft":
             e.preventDefault()
             sideScrollActive = false
             leftKeyPressed = true
-
-            // if (joBackson.x <= 30) {
-            // console.log(joBackson.x)
-            // } else if (joBackson.x <= 210 && originX >= 0 ) {
-            //     joBackson.x -= speed
-            // } else if (joBackson.x > 210 && originX <= -600){
-            //     joBackson.x -= speed
-            // } else if (originX > 0) {
-            //     joBackson.x -= speed
-            // } else {
-            //     originX += speed
-            // }
-            // joImgMove()
             break
         case "d":
         case "ArrowRight":
             e.preventDefault()
             sideScrollActive = false
             rightKeyPressed = true
-            
-            // if (joBackson.x < 210 && originX >= 0) {
-            //     joBackson.x += speed
-            // } else if (joBackson.x >= 210 && originX <= -600) {
-            //     joBackson.x += speed
-            // }
-            // else {
-            //     originX -= speed
-            // }
-            // joImgMove()
             break
         case "Enter":
             if (titleScreenActive) {
@@ -707,7 +712,6 @@ function gameLoop () {
             } else {
                 joBackson.y -= speed
             }
-            console.log("Up")
         }
         if (downKeyPressed) {
             if (originY > 0) {
@@ -762,7 +766,6 @@ function gameLoop () {
                         // move the defender and the offensive player
                         defender.x += 2
                         teammateArray[j].x -= 2
-                        console.log(`${teammateArray[j].x} :${teammateArray[j].y} , ${defender.x}: ${defender.y}`)
                     }
                 }
             })
