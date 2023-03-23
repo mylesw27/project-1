@@ -4,6 +4,7 @@ const clock = document.querySelector("#clock")
 const userScoreDisplay = document.querySelector("#userScore")
 const userScoreDiv = document.querySelector("#userTeamScoreDiv")
 const compScoreDisplay = document.querySelector("#compScore")
+const compScoreDiv = document.querySelector("#compTeamScoreDiv")
 const canvas = document.querySelector("canvas")
 const joImg1 = document.querySelector("#joImg1")
 const joImg2 = document.querySelector("#joImg2")
@@ -209,7 +210,6 @@ let computerDriveLogic = function() {
         if (compDriveYards > 75) {
             compDriveScore = 7
             compScore = compScore + compDriveScore
-            compScoreDisplay.innerText = compScore
         } else {
             compDriveScore = 0
         }
@@ -277,6 +277,13 @@ let renderComputerDriveSummary = function () {
         clock.innerText = `${gameClockMinutes} : 0${gameClockSeconds}`
     } else {
         clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
+    }
+    if (compDriveScore === 7) {
+        compScoreDiv.backgroundColor = "rgb(214, 29, 32)"
+        compScoreDisplay.innerText = compScore
+        setTimeout (function() {
+            compScoreDiv.backgroundColor = "transparent"
+        }, 3000)
     }
 }
 
