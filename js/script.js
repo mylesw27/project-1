@@ -515,6 +515,7 @@ function handleKeyPressEvent(e) {
             e.preventDefault()
             if (joBackson.y < 50) {
                 originY += speed
+                console.log(originY)
             } else {
                 joBackson.y -= speed
             }
@@ -547,6 +548,7 @@ function handleKeyPressEvent(e) {
                 originX += speed
             }
             sideScrollActive = false
+            console.log(originY)
             // joImgMove()
             break
         case "d":
@@ -571,6 +573,10 @@ function handleKeyPressEvent(e) {
         case "*":                                            // ***** CODE FOR TESTING. REMOVE BEFORE FINALIZING GAME *****
             e.preventDefault()
             totalGameTime = 5
+            break
+        case "-":
+            e.preventDefault
+            gameActive = false 
     }
 }
 
@@ -611,24 +617,65 @@ function gameLoop () {
             
             })
         // Move defensive players
-        const moveDefense = defenderArray.forEach(function(i) {
+        const moveDefense = defenderArray.forEach(function(defender, i) {
             const defenderSpeed = 1
 
-            
-            if (i.x + originX > joBackson.x){
-                i.x -= defenderSpeed
-            } else if (i.x + originX < joBackson.x){
-                i.x += defenderSpeed
+
+            // Check for block by offense
+            // Map offense X positions to new array
+            const teammateXMap = teammateArray.map(function(teammate){
+                return teammate.x
+            })
+            // Map defense Y positions to new array
+            const teammateYMap = teammateArray.map(function(teammate) {
+                return teammate.y
+            })
+            // iterate over each x position
+            const blockCheck = teammateXMap.forEach(function(teammate, j){
+                // if defender x position is with offensive player x position
+                if (teammate < defender.x && teammate + 25 >= defender.x) {
+                    // Check if defender y position is also within offensive player y position
+                    if (teammateYMap[j] < defender.y && teammateYMap[j]+40 >= defender.y) {
+                        // move the defender and the offensive player
+                        defender.x += 2
+                        teammateArray[j].x -= 2
+                        console.log(`${teammateArray[j].x} :${teammateArray[j].y} , ${defender.x}: ${defender.y}`)
+                    }
+                }
+            })
+
+            // Check for running into eachother - copy block check code and check for defenders instead
+            const defenseXMap = defenderArray.map(function(defense){
+                return defense.x
+            })
+            const defenseYMap = defenderArray.map(function(defense) {
+                return defense.y
+            })
+            const defenderCollisionCheck = defenseXMap.forEach(function(defense, j){
+                if (defense < defender.x && defense + 25 >= defender.x) {
+                    if (defenseYMap[j] < defender.y && defenseYMap[j]+40 >= defender.y) {
+                        defender.x += 1
+                        defender.y += 2
+                    }
+                }
+            })
+
+            // move defenders according to Jo's position
+             if (defender.x + originX > joBackson.x){
+                defender.x -= defenderSpeed
+            } else if (defender.x + originX < joBackson.x){
+                defender.x += defenderSpeed
             }
-            if (i.y > joBackson.y){
-                i.y -= defenderSpeed*2
-            } else if (i.y < joBackson.y){
-                i.y += defenderSpeed*2
+            if (defender.y + originY> joBackson.y){
+                defender.y -= defenderSpeed*2
+            } else if (defender.y +originY< joBackson.y){
+                defender.y += defenderSpeed*2
             }
         })
         const moveTeammates = teammateArray.forEach(function(i) {
             i.x += 1
         })
+        // console.log(`${defender9.x}: ${defender9.y} , ${teammate3.x + teammate3.width}: ${teammate3.y}`)
     }
 }
 
