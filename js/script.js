@@ -59,6 +59,10 @@ let defenderVerticalImage = 0
 let teammateCurrentImage = 0
 let sideScrollActive = true
 let titleScreenActive = true
+let upKeyPressed = false
+let downKeyPressed = false
+let leftKeyPressed = false
+let rightKeyPressed = false
 
 const titleScreen = setInterval(function() {
 
@@ -541,56 +545,62 @@ function handleKeyPressEvent(e) {
         case "w":
         case "ArrowUp":
             e.preventDefault()
-            if (joBackson.y < 50) {
-                originY += speed
-                console.log(originY)
-            } else {
-                joBackson.y -= speed
-            }
             sideScrollActive = false
-            // joImgMove()
+            upKeyPressed = true
+            console.log("upKeyDown")
+
+            // if (joBackson.y < 50) {
+            //     originY += speed
+            //     console.log(originY)
+            // } else {
+            //     joBackson.y -= speed
+            // }
             break
         case "s":
         case "ArrowDown":
             e.preventDefault()
-            if (originY > 0) {
-                originY -= speed
-            } else {
-                joBackson.y += speed
-            }
             sideScrollActive = false
-            // joImgMove()
+            downKeyPressed = true
+
+            // if (originY > 0) {
+            //     originY -= speed
+            // } else {
+            //     joBackson.y += speed
+            // }
             break
         case "a":
         case "ArrowLeft":
             e.preventDefault()
-            if (joBackson.x <= 30) {
-            console.log(joBackson.x)
-            } else if (joBackson.x <= 210 && originX >= 0 ) {
-                joBackson.x -= speed
-            } else if (joBackson.x > 210 && originX <= -600){
-                joBackson.x -= speed
-            } else if (originX > 0) {
-                joBackson.x -= speed
-            } else {
-                originX += speed
-            }
             sideScrollActive = false
-            console.log(originY)
+            leftKeyPressed = true
+
+            // if (joBackson.x <= 30) {
+            // console.log(joBackson.x)
+            // } else if (joBackson.x <= 210 && originX >= 0 ) {
+            //     joBackson.x -= speed
+            // } else if (joBackson.x > 210 && originX <= -600){
+            //     joBackson.x -= speed
+            // } else if (originX > 0) {
+            //     joBackson.x -= speed
+            // } else {
+            //     originX += speed
+            // }
             // joImgMove()
             break
         case "d":
         case "ArrowRight":
             e.preventDefault()
-            if (joBackson.x < 210 && originX >= 0) {
-                joBackson.x += speed
-            } else if (joBackson.x >= 210 && originX <= -600) {
-                joBackson.x += speed
-            }
-            else {
-                originX -= speed
-            }
             sideScrollActive = false
+            rightKeyPressed = true
+            
+            // if (joBackson.x < 210 && originX >= 0) {
+            //     joBackson.x += speed
+            // } else if (joBackson.x >= 210 && originX <= -600) {
+            //     joBackson.x += speed
+            // }
+            // else {
+            //     originX -= speed
+            // }
             // joImgMove()
             break
         case "Enter":
@@ -607,8 +617,52 @@ function handleKeyPressEvent(e) {
             gameActive = false 
     }
 }
+// Key up changes keyPressed value to false
+function handleKeyUpEvent(e) {
+    const speed = 20
+    switch(e.key) {
+        case "w":
+        case "ArrowUp":
+            e.preventDefault()
+            upKeyPressed = false
+            console.log("upKeyUp")
+            break
+        case "s":
+        case "ArrowDown":
+            e.preventDefault()
+            downKeyPressed = false
+            break
+        case "a":
+        case "ArrowLeft":
+            e.preventDefault()
+            leftKeyPressed = false
+            break
+        case "d":
+        case "ArrowRight":
+            e.preventDefault()
+            rightKeyPressed = false
+            break
+        case "Enter":
+            if (titleScreenActive) {
+                clearTitleScreen()
+            }
+            break
+        case "*":                                            // ***** CODE FOR TESTING. REMOVE BEFORE FINALIZING GAME *****
+            e.preventDefault()
+            totalGameTime = 5
+            break
+        case "-":
+            e.preventDefault
+            gameActive = false 
+    }
+}
+
+
+
+
 
 document.addEventListener("keydown", handleKeyPressEvent)
+document.addEventListener("keyup", handleKeyUpEvent)
 
 // Game Loop
 function gameLoop () {
@@ -644,6 +698,47 @@ function gameLoop () {
                 }
             
             })
+        // Move user 
+        speed = 4
+        if (upKeyPressed){
+            if (joBackson.y < 50) {
+                originY += speed
+                console.log(originY)
+            } else {
+                joBackson.y -= speed
+            }
+            console.log("Up")
+        }
+        if (downKeyPressed) {
+            if (originY > 0) {
+                originY -= speed
+            } else {
+                joBackson.y += speed
+            }
+        }
+        if (leftKeyPressed) {
+            if (joBackson.x <= 30) {
+            console.log(joBackson.x)
+            } else if (joBackson.x <= 210 && originX >= 0 ) {
+                joBackson.x -= speed
+            } else if (joBackson.x > 210 && originX <= -600){
+                joBackson.x -= speed
+            } else if (originX > 0) {
+                joBackson.x -= speed
+            } else {
+                originX += speed
+            }
+        }
+        if (rightKeyPressed) {
+            if (joBackson.x < 210 && originX >= 0) {
+                joBackson.x += speed
+            } else if (joBackson.x >= 210 && originX <= -600) {
+                joBackson.x += speed
+            }
+            else {
+                originX -= speed
+            }
+        }
         // Move defensive players
         const moveDefense = defenderArray.forEach(function(defender, i) {
             const defenderSpeed = 1
