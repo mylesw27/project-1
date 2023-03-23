@@ -2,6 +2,7 @@
 const scoreboard = document.querySelector("#scoreboard")
 const clock = document.querySelector("#clock")
 const userScoreDisplay = document.querySelector("#userScore")
+const userScoreDiv = document.querySelector("#userTeamScoreDiv")
 const compScoreDisplay = document.querySelector("#compScore")
 const canvas = document.querySelector("canvas")
 const joImg1 = document.querySelector("#joImg1")
@@ -22,6 +23,8 @@ const defenderDownImg1 = document.querySelector("#defenderDown1")
 const defenderDownImg2 = document.querySelector("#defenderDown2")
 const teammateImg1 = document.querySelector("#teammate1")
 const teammateImg2 = document.querySelector("#teammate2")
+const referee = document.querySelector("#referee")
+console.log(referee)
 
 const arrowkeys = document.querySelector("#arrowkeys")
 
@@ -239,6 +242,8 @@ let renderComputerDriveSummary = function () {
         clock.innerText = `${gameClockMinutes} : ${gameClockSeconds}`
     }
 }
+
+
 
 
 //Create Classes
@@ -472,12 +477,35 @@ function outOfBoundsTimeout() {
     setTimeout(computerDriveTimeout, 3000)
 }
 
+let refereePosition
 function touchdownTimeout () {
     timeOutTemplate()
     ctx.textAlign = "center"
     ctx.fillStyle = "black"
     ctx.font = "35px bungee"
-    ctx.fillText ("Touchdown!!", 300, 100)
+    ctx.fillText ("Touchdown!!", 300, 200)
+    const userScoreColorChange = setInterval(function() {
+        if (userScoreDiv.style.backgroundColor = "transparent") {
+            userScoreDiv.style.backgroundColor = "rgb(234, 212, 55)"
+        } else {
+            userScoreDiv.style.backgroundColor = "transparent"
+        }
+    }, 500)
+    setTimeout(function() {
+        clearInterval(userScoreColorChange)
+        userScoreDiv.style.backgroundColor = "transparent"
+    }, 3000)
+    refereePosition = 300
+    const refereeTransition = setInterval(function (){
+        ctx.clearRect(150, 400, 300, 110, canvas.height)
+        ctx.fillStyle = "orange"
+        ctx.fillRect(150, 400, 300, 110)
+        ctx.drawImage(referee, refereePosition, 410, 100, 100)
+        refereePosition -=5
+    }, 60)
+    setTimeout(function() {
+        clearInterval(refereeTransition)
+        }, 600)
     setTimeout(computerDriveTimeout, 3000)
 }
 
