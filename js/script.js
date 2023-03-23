@@ -216,6 +216,38 @@ let computerDriveLogic = function() {
     } 
 }
 
+let renderComputerDriveTransition = function () {
+    ctx.strokeStyle = "redorange"
+    ctx.beginPath()
+    ctx.roundRect(148, 48, 316, 466, 5)
+    ctx.stroke()
+    ctx.fillStyle = "orange"
+    ctx.roundRect(150, 50, 300, 450, 5)
+    ctx.fill()
+    ctx.textAlign = "left"
+    ctx.fillStyle = "black"
+    ctx.font = "15px bungee"
+    ctx.fillText ("Defender's receive the ball", 160, 100)
+    setTimeout(function() {
+        ctx.fillText ("The runningback runs left...", 160, 200)
+    }, 750)
+    setTimeout(function() {
+        ctx.fillText ("The runningback runs right...", 160, 300)
+    }, 1500)
+    setTimeout (function () {
+        ctx.fillStyle = "red"
+        ctx.font = "25px bungee"
+        if (compDriveScore == 7){
+            ctx.textAlign = "center"
+            ctx.fillText ("TOUCHDOWN", 300, 400)
+        } else {
+            ctx.textAlign = "center"
+            ctx.fillText ("STOPPED", 300, 400)
+        }
+    }, 2500)
+
+}
+
 let renderComputerDriveSummary = function () {
     ctx.strokeStyle = "redorange"
     ctx.beginPath()
@@ -388,7 +420,14 @@ const downCheck = function() {
     console.log(currentDown, "originx" + originX)
     if (currentDown < 4) {
         isTackled = false
-        originX = originX += 90
+        if (originX > -610) {
+            originX = originX += 90
+            joBackson.x = 210
+            joBackson.y = 220
+        } else {
+            originX = originX
+            joBackson.y = 220
+        }
         originY = 0
         const resetDefenders = defenderArray.forEach(function(defenderArray,i) {
             defenderArray.x = defenderOriginX[i] - (originX)
@@ -401,8 +440,6 @@ const downCheck = function() {
             teammateArray.y = teammateOriginY[i] + originY
         })
         console.log(defender1.x)
-        joBackson.x = 210
-        joBackson.y = 220
         sideScrollActive = true
         if (totalGameTime > 0) {
             gameActive = true
@@ -418,7 +455,7 @@ const downCheck = function() {
             currentDownDisplay.innerText = "4th Down"
         }
     } else {
-        setTimeout(computerDriveTimeout, 1000)
+        setTimeout(computerDriveTimeout, 500)
         currentDown = 1
     }
 }
@@ -448,14 +485,16 @@ const gameResult = function() {
         ctx.font = "25px bungee"
         ctx.textAlign = "center"
         ctx.fillText ("CONGRATULATIONS!!", 300, 100)
-        ctx.fillText ("You have won the Canvas Bowl", 300, 300)
+        ctx.fillText ("You have won the ", 300, 300)
+        ctx.fillText ("Canvas League Championship!", 300, 350)
     } else if (userScore < compScore) {
         ctx.clearRect(0,0, canvas.width, canvas.height)
         ctx.fillStyle = "black"
         ctx.font = "25px bungee"
         ctx.textAlign = "center"
         ctx.fillText ("Sorry", 300, 100)
-        ctx.fillText ("You have lost the Canvas Bowl", 300, 300)
+        ctx.fillText ("You have lost the", 300, 300)
+        ctx.fillText ("Canvas League Championship", 300, 350)
     } else {
         totalGameTime = 30
         gameActive = true
@@ -500,26 +539,10 @@ function timeOutTemplate() {
 }
 
 function tackledTimeout() {
-    // timeOutTemplate()
-    // ctx.textAlign = "center"
-    // ctx.fillStyle = "black"
-    // ctx.font = "50px bungee"
-    // ctx.fillText ("Ouch!", 300, 100)
-    // ctx.font = "20px bungee"
-    // ctx.fillText ("Tackled on the play!", 300, 175)
-    // ctx.fillText ("Defender's Turn!", 300, 300)
     setTimeout(downCheck, 1000)
 }
 
 function outOfBoundsTimeout() {
-    timeOutTemplate()
-    ctx.textAlign = "center"
-    ctx.fillStyle = "black"
-    ctx.font = "50px bungee"
-    ctx.fillText ("Careful!", 300, 100)
-    ctx.font = "20px bungee"
-    ctx.fillText ("Stepped out of bounds!", 300, 175)
-    ctx.fillText ("Defender's Turn!", 300, 300)
     setTimeout(downCheck, 1000)
 }
 
@@ -562,8 +585,9 @@ function computerDriveTimeout() {
         originY = 0
         renderField() 
         computerDriveLogic()
-        renderComputerDriveSummary()
-        setTimeout(reset, 3000)
+        renderComputerDriveTransition()
+        setTimeout(renderComputerDriveSummary,3000)
+        setTimeout(reset, 6000)
     } else {
         reset()
     }
@@ -799,7 +823,7 @@ function gameLoop () {
             }
         })
         const moveTeammates = teammateArray.forEach(function(i) {
-            i.x += 1
+            i.x += 2
         })
         // console.log(`${defender9.x}: ${defender9.y} , ${teammate3.x + teammate3.width}: ${teammate3.y}`)
     }
