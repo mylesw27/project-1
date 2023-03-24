@@ -26,6 +26,10 @@ const teammateImg1 = document.querySelector("#teammate1")
 const teammateImg2 = document.querySelector("#teammate2")
 const referee = document.querySelector("#referee")
 const currentDownDisplay = document.querySelector("#currentDownDisplay")
+const gameStart = document.querySelector("#gameStart")
+const jsEndzone = document.querySelector("#jsEndzone")
+const tdEndzone = document.querySelector("#tdEndzone")
+
 
 const arrowkeys = document.querySelector("#arrowkeys")
 
@@ -65,6 +69,7 @@ let downKeyPressed = false
 let leftKeyPressed = false
 let rightKeyPressed = false
 let currentDown = 1
+let gameOver = false
 
 const titleScreen = setInterval(function() {
 
@@ -79,11 +84,15 @@ const titleScreen = setInterval(function() {
     ctx.drawImage (arrowkeys, 100, 300, 400, 600)
 }, 60)
 
-
+const gameStartScreen = function() {
+    clearInterval(titleScreen)
+    ctx.clearRect(0,0, canvas.width, canvas.height)
+    ctx.drawImage (gameStart, 50, 100, 500, 500)
+    setTimeout(clearTitleScreen, 2000)
+}
 
 const clearTitleScreen =  function() {
     titleScreenActive = false
-    clearInterval(titleScreen)
     scoreboard.style.display = "grid"
     joBackson.x = 150
     originX = 60
@@ -161,10 +170,14 @@ const clockTick = function(){
 }
 let renderField = function () {
     // Create End Zones
-    ctx.fillStyle = "blue"
-    ctx.fillRect(originX+15, originY+20, 100, 650) // Left End Zone
+    // ctx.fillStyle = "blue"
+    // ctx.fillRect(originX+15, originY+20, 100, 650) // Left End Zone
+    ctx.drawImage(jsEndzone, originX+15, originY+20, 100, 650)
     ctx.fillStyle = "red"
     ctx.fillRect(originX+1080, originY+20, 100, 650) // Right End Zone
+    ctx.drawImage(tdEndzone, originX+1080, originY+20, 100, 650)
+    
+    
 
 
     // Create Side Lines
@@ -186,6 +199,36 @@ let renderField = function () {
     ctx.fillRect (originX+894, originY+20, 1, 650) // opp 20 Yard Line
     ctx.fillRect (originX+992, originY+20, 1, 650) // opp 10 Yard Line
     ctx.fillRect (originX+1080, originY+20, 1, 650) // goal line - Right End Zone
+
+
+    const leftHashMark = 260 + originY
+    const rightHashMark = 340 + originY
+
+    ctx.fillRect (originX+133.6, leftHashMark, 1, 5)
+    ctx.fillRect (originX+133.6, rightHashMark, 1, 5)
+    ctx.fillRect (originX+152.2, leftHashMark, 1, 5)
+    ctx.fillRect (originX+152.2, rightHashMark, 1, 5)
+    ctx.fillRect (originX+170.8, rightHashMark, 1, 5)
+    ctx.fillRect (originX+170.8, leftHashMark, 1, 5)
+    ctx.fillRect (originX+189.4, rightHashMark, 1, 5)
+    ctx.fillRect (originX+189.4, leftHashMark, 1, 5)
+
+    ctx.fillRect (originX+1009.6, leftHashMark, 1, 5)
+    ctx.fillRect (originX+1009.6, rightHashMark, 1, 5)
+    ctx.fillRect (originX+1027.2, leftHashMark, 1, 5)
+    ctx.fillRect (originX+1027.2, rightHashMark, 1, 5)
+    ctx.fillRect (originX+1044.8, rightHashMark, 1, 5)
+    ctx.fillRect (originX+1044.8, leftHashMark, 1, 5)
+    ctx.fillRect (originX+1062.4, rightHashMark, 1, 5)
+    ctx.fillRect (originX+1062.4, leftHashMark, 1, 5)
+
+    let hashX = 208 + originX
+    for(let i = 0; i<40; i++) {
+        hashX += 19.6
+        ctx.fillRect (hashX, leftHashMark, 1, 5)
+        ctx.fillRect (hashX, rightHashMark, 1, 5)
+    }
+
 }
 
 function getRandomInt(max) {
@@ -227,7 +270,7 @@ let renderComputerDriveTransition = function () {
     ctx.textAlign = "left"
     ctx.fillStyle = "black"
     ctx.font = "15px bungee"
-    ctx.fillText ("Defender's receive the ball", 160, 100)
+    ctx.fillText ("Defenders receive the ball", 160, 100)
     setTimeout(function() {
         ctx.fillText ("The runningback runs left...", 160, 200)
     }, 750)
@@ -494,6 +537,8 @@ const gameResult = function() {
         ctx.fillText ("CONGRATULATIONS!!", 300, 100)
         ctx.fillText ("You have won the ", 300, 300)
         ctx.fillText ("Canvas League Championship!", 300, 350)
+        ctx.fillText ("Press Enter to Play Again", 300, 500)
+        gameOver = true
     } else if (userScore < compScore) {
         ctx.clearRect(0,0, canvas.width, canvas.height)
         ctx.fillStyle = "black"
@@ -505,6 +550,7 @@ const gameResult = function() {
     } else {
         totalGameTime = 30
         gameActive = true
+        gameOver = true
     }
 }
 const reset = function () {
@@ -529,6 +575,35 @@ const reset = function () {
     } else {
         gameResult()
     }
+}
+
+const gameReset = function() {
+    originX = 0
+    originY = 0 
+    isTouchdown = false
+    isTackled = false
+    isOutOfBounds = false
+    userScore = 0
+    compScore = 0
+    totalGameTime = 120
+    gameActive = false
+    touchDownActive = false
+    joCurrentImage = 0
+    defenderCurrentImage = 0
+    defenderVerticalImage = 0
+    teammateCurrentImage = 0
+    sideScrollActive = true
+    titleScreenActive = true
+    upKeyPressed = false
+    downKeyPressed = false
+    leftKeyPressed = false
+    rightKeyPressed = false
+    currentDown = 1
+    gameOver = false
+    userScoreDisplay.innerText = "00"
+    compScoreDisplay.innerText = "00"
+
+    titleScreen()
 }
 
 function timeOutTemplate() {
@@ -641,16 +716,15 @@ function handleKeyPressEvent(e) {
             break
         case "Enter":
             if (titleScreenActive) {
-                clearTitleScreen()
+                gameStartScreen()
             }
-            break
-        case "*":                                            // ***** CODE FOR TESTING. REMOVE BEFORE FINALIZING GAME *****
+            if (gameOver){
+                gameReset()
+            }
+            break 
+        case "*":
             e.preventDefault()
             totalGameTime = 5
-            break
-        case "-":
-            e.preventDefault
-            gameActive = false 
     }
 }
 // Key up changes keyPressed value to false
@@ -677,19 +751,7 @@ function handleKeyUpEvent(e) {
         case "ArrowRight":
             e.preventDefault()
             rightKeyPressed = false
-            break
-        case "Enter":
-            if (titleScreenActive) {
-                clearTitleScreen()
-            }
-            break
-        case "*":                                            // ***** CODE FOR TESTING. REMOVE BEFORE FINALIZING GAME *****
-            e.preventDefault()
-            totalGameTime = 5
-            break
-        case "-":
-            e.preventDefault
-            gameActive = false 
+            break 
     }
 }
 
@@ -835,7 +897,6 @@ function gameLoop () {
         // console.log(`${defender9.x}: ${defender9.y} , ${teammate3.x + teammate3.width}: ${teammate3.y}`)
     }
 }
-
 
 
 
