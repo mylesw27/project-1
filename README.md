@@ -35,3 +35,6 @@ The approach taken was to create a very basic football game and expand on it as 
 
 ## Post-project Reflection
 I felt like a had tremendous growth as a developer during this project. The nature of the project required several instances of employing intervals and timeouts. These are concepts that I was not too familiar with before starting the project. By the end, I had a strong grasp on them and was using them with ease to create different situations and even animations. I also realize that my initial ideas for the game were too expansive to create in a week. I was able to create a complete game that I am proud of. However, the full execution of the game is not quite as expansive as the grand ideas I had when brainstorming for the game. Overall, I enjoyed working on this project and being able to explore the creative possibilities of the javascript canvas. 
+
+## Sources Used
+Google Fonts - Bungee - https://fonts.google.com/specimen/Bungee/about?query=bungee

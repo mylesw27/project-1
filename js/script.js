@@ -521,6 +521,15 @@ const printOutOfBounds = function() {
     ctx.font = "50px bungee"
     ctx.textAlign = "left"
     ctx.fillText ("Out of Bounds", 20, 100+originY)
+    setTimeout (function () {
+        if (currentDown === 1) {
+            ctx.fillText ("2nd Down", 20, 150+originY)
+        } else if (currentDown === 2) {
+            ctx.fillText ("3rd Down", 20, 150+originY)
+        } else if (currentDown === 3) {
+            ctx.fillText ("Last Chance", 20, 150+originY)
+        }
+    },500)
 }
 
 const outOfBoundsCheck = function() {
