@@ -743,9 +743,6 @@ function handleKeyPressEvent(e) {
                 gameReset()
             }
             break 
-        case "*":
-            totalGameTime = 5
-            userScore = 7
     }
 }
 // Key up changes keyPressed value to false. Creates smoother movement for user player. 
