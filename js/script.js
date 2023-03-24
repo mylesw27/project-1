@@ -47,7 +47,7 @@ let isTackled = false
 let isOutOfBounds = false
 let userScore = 0
 let compScore = 0
-let totalGameTime = 120
+let totalGameTime = 180
 let gameClockMinutes = Math.floor(totalGameTime / 60)
 let gameClockSeconds = totalGameTime % 60
 let gameActive = false
@@ -247,7 +247,7 @@ let computerDriveLogic = function() {
         if (totalGameTime <= 0) {
             totalGameTime = 0
             clock.innerText = "0:00"
-        } else {sd
+        } else {
             totalGameTime = totalGameTime - compDriveTime
         }
         clockTick()
@@ -554,6 +554,8 @@ const gameResult = function() {
         ctx.fillText ("Sorry", 300, 100)
         ctx.fillText ("You have lost the", 300, 300)
         ctx.fillText ("Canvas League Championship", 300, 350)
+        ctx.fillText ("Press Enter to Play Again", 300, 500)
+        gameOver = true
     } else {
         totalGameTime = 30
         gameActive = true
@@ -592,7 +594,7 @@ const gameReset = function() {
     isOutOfBounds = false
     userScore = 0
     compScore = 0
-    totalGameTime = 120
+    totalGameTime = 180
     gameActive = false
     touchDownActive = false
     joCurrentImage = 0
@@ -609,8 +611,20 @@ const gameReset = function() {
     gameOver = false
     userScoreDisplay.innerText = "00"
     compScoreDisplay.innerText = "00"
-
-    titleScreen()
+    const resetDefenders = defenderArray.forEach(function(defenderArray,i) {
+        defenderArray.x = defenderOriginX[i]
+        defenderArray.y = defenderOriginY[i]
+    })
+    const resetTeammates = teammateArray.forEach(function(teammateArray,i) {
+        teammateArray.x = teammateOriginX[i]
+        teammateArray.y = teammateOriginY[i]
+    })
+    joBackson.x = 210
+    joBackson.y = 220
+    currentDown = 1
+    currentDownDisplay.innerText = "1st Down"
+    sideScrollActive = true
+    gameStartScreen()
 }
 
 function timeOutTemplate() {
@@ -729,6 +743,9 @@ function handleKeyPressEvent(e) {
                 gameReset()
             }
             break 
+        case "*":
+            totalGameTime = 5
+            userScore = 7
     }
 }
 // Key up changes keyPressed value to false. Creates smoother movement for user player. 
@@ -791,6 +808,15 @@ function gameLoop () {
                     ctx.font = "50px bungee"
                     ctx.textAlign = "left"
                     ctx.fillText ("TACKLED", 20, 100+originY)
+                    setTimeout (function () {
+                        if (currentDown === 1) {
+                            ctx.fillText ("2nd Down", 20, 150+originY)
+                        } else if (currentDown === 2) {
+                            ctx.fillText ("3rd Down", 20, 150+originY)
+                        } else if (currentDown === 3) {
+                            ctx.fillText ("Last Chance", 20, 150+originY)
+                        }
+                    },500)
                     gameActive = false
                     setTimeout(tackledTimeout, 1000)
                 }
