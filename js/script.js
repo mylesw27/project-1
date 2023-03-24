@@ -35,10 +35,11 @@ const arrowkeys = document.querySelector("#arrowkeys")
 
 // Canvas Setup
 const ctx = canvas.getContext("2d")
-// Set canvas resolution (Current resolution = 500 x 1200)
+// Set canvas resolution (Current resolution = 500 x 600)
 canvas.setAttribute('height', getComputedStyle(canvas).height)
 canvas.setAttribute('width', 600)
 
+// Declare variables
 let originX = 0
 let originY = 0 
 let isTouchdown = false
@@ -72,7 +73,6 @@ let currentDown = 1
 let gameOver = false
 
 const titleScreen = setInterval(function() {
-
     ctx.textAlign = "center"
     ctx.fillStyle = "White"
     ctx.font = "25px bungee"
@@ -243,13 +243,15 @@ let compDriveScore = 0
 let computerDriveLogic = function() {
     if (totalGameTime > 0) {
         compDriveTime = getRandomInt(10,40)
+        // Adjust clock for time of defender drive
         if (totalGameTime <= 0) {
             totalGameTime = 0
             clock.innerText = "0:00"
-        } else {
+        } else {sd
             totalGameTime = totalGameTime - compDriveTime
         }
         clockTick()
+        // Calculate random yards gained by Defenders. If they gained more than 75 yards, they scored a touchdown. 
         compDriveYards = getRandomInt (50, 100)
         if (compDriveYards > 74) {
             compDriveScore = 7
@@ -446,9 +448,11 @@ const renderPlayers = function(){
 const gameLoopInterval = setInterval(gameLoop, 60)
 const clockTickInterval = setInterval(clockTick, 1000)
 const defenderArray = [defender1, defender2, defender3, defender4, defender5, defender6, defender7, defender8, defender9, defender10, defender11,]
+// set defender positions to an array to make resets easier
 const defenderOriginX = [580, 1000, 450, 800, 450, 700, 450, 700, 450, 1000, 580]
 const defenderOriginY = [75, 186, 150, 150, 220, 250, 300, 350, 400, 400, 525]
 const teammateArray = [teammate1, teammate2, teammate3, teammate4, teammate5, teammate6, teammate7, teammate8, teammate9, teammate10]
+// set teammate positions to an array to make resets easier
 const teammateOriginX = [295, 300, 310, 310, 310, 310, 310, 310, 300, 300]
 const teammateOriginY = [220, 75, 170, 190, 210, 230, 250, 275, 420, 475]
 
@@ -467,6 +471,8 @@ const touchdownCheck = function() {
     }
 }
 
+
+// Check the current down after each play. If it is first, second or third down, move player positioning and play again. If it is 4th down, change possession to Defenders.
 const downCheck = function() {
     console.log(currentDown, "originx" + originX)
     if (currentDown < 4) {
@@ -723,12 +729,9 @@ function handleKeyPressEvent(e) {
                 gameReset()
             }
             break 
-        case "*":
-            e.preventDefault()
-            totalGameTime = 5
     }
 }
-// Key up changes keyPressed value to false
+// Key up changes keyPressed value to false. Creates smoother movement for user player. 
 function handleKeyUpEvent(e) {
     const speed = 20
     switch(e.key) {
@@ -755,10 +758,6 @@ function handleKeyUpEvent(e) {
             break 
     }
 }
-
-
-
-
 
 document.addEventListener("keydown", handleKeyPressEvent)
 document.addEventListener("keyup", handleKeyUpEvent)
@@ -800,6 +799,7 @@ function gameLoop () {
         // Move user 
         speed = 4
         if (upKeyPressed){
+            // if Jo is at the top of the screen, move the canvas instead of the player
             if (joBackson.y < 50) {
                 originY += speed
                 console.log(originY)
@@ -815,6 +815,7 @@ function gameLoop () {
             }
         }
         if (leftKeyPressed) {
+            // if Jo is closed to either end of the field, move the canvas instead of the player
             if (joBackson.x <= 30) {
             console.log(joBackson.x)
             } else if (joBackson.x <= 210 && originX >= 0 ) {
@@ -853,7 +854,7 @@ function gameLoop () {
             })
             // iterate over each x position
             const blockCheck = teammateXMap.forEach(function(teammate, j){
-                // if defender x position is with offensive player x position
+                // if defender x position is withis offensive player x position
                 if (teammate < defender.x && teammate + 25 >= defender.x) {
                     // Check if defender y position is also within offensive player y position
                     if (teammateYMap[j] < defender.y && teammateYMap[j]+40 >= defender.y) {
@@ -864,16 +865,22 @@ function gameLoop () {
                 }
             })
 
-            // Check for running into eachother - copy block check code and check for defenders instead
+            // Check for defenders running into eachother
+            // Map defender x positions to new array
             const defenseXMap = defenderArray.map(function(defense){
                 return defense.x
             })
+            // Map defense y positions to new array
             const defenseYMap = defenderArray.map(function(defense) {
                 return defense.y
             })
+            //  iterate over each x position
             const defenderCollisionCheck = defenseXMap.forEach(function(defense, j){
+                // if defender x position is within another defender's x position plus width
                 if (defense < defender.x && defense + 25 >= defender.x) {
+                    // if defenders also share y position  plus height
                     if (defenseYMap[j] < defender.y && defenseYMap[j]+40 >= defender.y) {
+                        // nudge defender diagonally
                         defender.x += 1
                         defender.y += 2
                     }
@@ -895,15 +902,5 @@ function gameLoop () {
         const moveTeammates = teammateArray.forEach(function(i) {
             i.x += 2
         })
-        // console.log(`${defender9.x}: ${defender9.y} , ${teammate3.x + teammate3.width}: ${teammate3.y}`)
     }
 }
-
-
-
-// Console log mouse location for testing
-canvas.addEventListener("click", e => {
-    console.log(`x: ${e.offsetX}, y: ${e.offsetY}`)
-})
-// Console log for testing
-// console.log(defenderOriginX)

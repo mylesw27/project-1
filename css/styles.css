@@ -1,5 +1,4 @@
 body {
-    /* background-color: antiquewhite; */
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -17,21 +16,13 @@ header {
 }
 
 canvas {
-    /* background-color: rgb(11, 96, 11); */
     height: 700px;
     width: 1200px;
-    /* height: 80vh; */
-    /* width: 100vw;  */
-    /* border-left: 20px solid white; */
-    /* background: url("../img/grass_texture.png"); */
-    
 }
 
 #scoreboard {
     background-color: white;
-    /* background-image: linear-gradient(rgba(255, 255, 255, 0), grey, white, grey, rgba(255, 255, 255, 0)); */
     height: 60px;
-    /* width: 1200px; */
     width: 100vw;
     display: none;
     grid-template-columns: 1fr 80px 200px 200px 2fr 200px 200px 80px 1fr;
@@ -52,7 +43,6 @@ canvas {
 
 #userTeamLogoDiv {
     grid-area: userTeamLogo;
-    /* background-color: hotpink; */
     height: 60;
 }
 
@@ -60,7 +50,6 @@ canvas {
     display: flex;
     width: 80px;
     height: 80px;
-    /* background-color: orange; */
 }
 
 #userTeamScoreDiv {
