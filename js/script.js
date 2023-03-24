@@ -86,9 +86,10 @@ const titleScreen = setInterval(function() {
 
 const gameStartScreen = function() {
     clearInterval(titleScreen)
+    titleScreenActive = false
     ctx.clearRect(0,0, canvas.width, canvas.height)
     ctx.drawImage (gameStart, 50, 100, 500, 500)
-    setTimeout(clearTitleScreen, 2000)
+    setTimeout(clearTitleScreen, 3000)
 }
 
 const clearTitleScreen =  function() {
@@ -201,8 +202,8 @@ let renderField = function () {
     ctx.fillRect (originX+1080, originY+20, 1, 650) // goal line - Right End Zone
 
 
-    const leftHashMark = 260 + originY
-    const rightHashMark = 340 + originY
+    const leftHashMark = 280 + originY
+    const rightHashMark = 360 + originY
 
     ctx.fillRect (originX+133.6, leftHashMark, 1, 5)
     ctx.fillRect (originX+133.6, rightHashMark, 1, 5)
@@ -231,8 +232,8 @@ let renderField = function () {
 
 }
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max)
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min) + min)
 }
 
 let compDriveTime = 0
@@ -241,7 +242,7 @@ let compDriveScore = 0
 
 let computerDriveLogic = function() {
     if (totalGameTime > 0) {
-        compDriveTime = getRandomInt(30)
+        compDriveTime = getRandomInt(10,40)
         if (totalGameTime <= 0) {
             totalGameTime = 0
             clock.innerText = "0:00"
@@ -249,8 +250,8 @@ let computerDriveLogic = function() {
             totalGameTime = totalGameTime - compDriveTime
         }
         clockTick()
-        compDriveYards = getRandomInt (100)
-        if (compDriveYards > 75) {
+        compDriveYards = getRandomInt (50, 100)
+        if (compDriveYards > 74) {
             compDriveScore = 7
             compScore = compScore + compDriveScore
         } else {
@@ -273,10 +274,10 @@ let renderComputerDriveTransition = function () {
     ctx.fillText ("Defenders receive the ball", 160, 100)
     setTimeout(function() {
         ctx.fillText ("The runningback runs left...", 160, 200)
-    }, 750)
+    }, 1000)
     setTimeout(function() {
         ctx.fillText ("The runningback runs right...", 160, 300)
-    }, 1500)
+    }, 2000)
     setTimeout (function () {
         ctx.fillStyle = "red"
         ctx.font = "25px bungee"
@@ -287,7 +288,7 @@ let renderComputerDriveTransition = function () {
             ctx.textAlign = "center"
             ctx.fillText ("STOPPED", 300, 400)
         }
-    }, 2500)
+    }, 3000)
 
 }
 
@@ -668,8 +669,8 @@ function computerDriveTimeout() {
         renderField() 
         computerDriveLogic()
         renderComputerDriveTransition()
-        setTimeout(renderComputerDriveSummary,3000)
-        setTimeout(reset, 6000)
+        setTimeout(renderComputerDriveSummary,4000)
+        setTimeout(reset, 8000)
     } else {
         reset()
     }
